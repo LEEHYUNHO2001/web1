@@ -1,0 +1,13 @@
+<p>
+WEB, HTML, CSS, Javascript 각각 누르면 그에 맞는 페이지로 링크
+
+→ 그에 맞는 title과 description이 출력된다.
+
+create 버튼 : title과 description을 입력하면 data 디렉토리에 파일이 생기고 목록에도 추가된다.
+
+update 버튼 : Home에서는 안보이고, 해당 목록을 누르면 표시된다. 만들었던 목록에 대해 title이나 description을 수정할 수 있도록 설계했다.
+
+delete 버튼 : 해당 목록을 지울 수 있고, 지우면 Home으로 리다이렉션.
+
+좋은 코딩을 위해 함수와 객체 등을 사용했다.
+</p>

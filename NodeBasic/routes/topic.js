@@ -4,9 +4,15 @@ const path = require('path');
 const fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
+var bodyParser = require('body-parser');
+var login = require('../Cookie/logincookie.js');
+
+router.use(bodyParser.urlencoded({extended: false}));
 
 //create
 router.get('/create', (request, response) => {
+    //login 접근 제어
+    if(login.loginRequire(request, response) === false){return false;}
     fs.readdir('./data', function(error, filelist){
         var title = 'Web - create';
         var list = template.list(filelist);
@@ -21,7 +27,9 @@ router.get('/create', (request, response) => {
                 <input type="submit">
             </p>
         </form>               
-        `, '');
+        `, 
+        '',
+        login.authStatusUI(request ,response));
         response.send(html);
     });      
 });
@@ -35,6 +43,7 @@ router.post('/create_process', (request, response) => {
         response.redirect(`/topic/${title}`);
     });
     /*
+    //express 사용 전
     var body ='';
     request.on('data', function(data){
         body=body + data;
@@ -52,6 +61,8 @@ router.post('/create_process', (request, response) => {
 
 //update
 router.get('/update/:pageId', (request, response) => {
+    //login 접근 제어
+    if(login.loginRequire(request, response) === false){return false;}
     fs.readdir('./data', function(error, filelist){
         var filteredId = path.parse(request.params.pageId).base;                   
         fs.readFile(`data/${filteredId}`, `utf8`, function(err, description){
@@ -73,7 +84,8 @@ router.get('/update/:pageId', (request, response) => {
                 
                 `,
                 `<a href="/topic/create">create</a>
-                <a href="/topic/update/${title}">update</a>`
+                <a href="/topic/update/${title}">update</a>`,
+                login.authStatusUI(request ,response)
                 );
             response.send(html);
         });
@@ -95,6 +107,8 @@ router.post('/update_process', (request, response) => {
 
 //data directory read -> unliink
 router.post('/delete_process', (request, response) => {
+    //login 접근 제어
+    if(login.loginRequire(request, response) === false){return false;}
     var post = request.body;
     var id = post.id;
     var filteredId = path.parse(id).base;
@@ -123,7 +137,8 @@ router.get('/:pageId', (request, response, next) => {
                     <form action="/topic/delete_process" method="post">
                         <input type="hidden" name="id" value="${sanitizeTitle}">
                         <input type="submit" value="delete">
-                    </form>`
+                    </form>`,
+                    login.authStatusUI(request ,response)
                     );
                 response.send(html); 
             }   

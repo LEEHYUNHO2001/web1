@@ -2,22 +2,18 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-
-var bodyParser = require('body-parser');
 var compression = require('compression');
+var helmet = require('helmet');
 
 var indexRouter = require('./routes/index');
 var topicRouter = require('./routes/topic');
 
 app.use(helmet());
-
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
 
 app.use('/', indexRouter)
 app.use('/topic', topicRouter)
-
 
 app.use(function(request, response, next){
     response.status(404).send('Can not page!!!');

@@ -5,25 +5,29 @@ const fs = require('fs');
 const path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var loginRouter = require('./login');
+/*var loginRouter = require('./loginCookie');
 var login = require('../Cookie/logincookie.js');
+router.use('/', loginRouter)*/
+var login = require('../Cookie/loginsession.js');
 
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({extended: false}));
-router.use('/', loginRouter)
 
 //Home
 router.get('/', (request, response) => {
     fs.readdir('./data', function(error, filelist){
-        var title = 'Web';
-        var description = 'Welcome Web';
+
+        var title = 'Node.js 게시판';
+        var description = `<a href="https://github.com/LEEHYUNHO2001/web1/tree/master" 
+                            target="_blank" title="github 주소">클릭 GitHub</a>`;
         var list = template.list(filelist);
         var html = template.HTML(title, list,
             `<h2>${title}</h2>${description}
             <img src="/images/view.jpg" style="width:300px; display:block; margin-top:10px">`,
-            `<a href="/topic/create">create</a>`,
-            login.authStatusUI(request ,response)); 
-    response.send(html);  
+            `<a href="/topic/create">글쓰기</a>`,
+            login.authStatusUI(request, response)
+            ); 
+    response.send(html);
     });                
 });
 

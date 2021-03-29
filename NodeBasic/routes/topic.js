@@ -5,7 +5,8 @@ const fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
-var login = require('../Cookie/logincookie.js');
+//var login = require('../Cookie/logincookie.js');
+var login = require('../Cookie/loginsession.js');
 
 router.use(bodyParser.urlencoded({extended: false}));
 
@@ -85,8 +86,7 @@ router.get('/update/:pageId', (request, response) => {
                 `,
                 `<a href="/topic/create">create</a>
                 <a href="/topic/update/${title}">update</a>`,
-                login.authStatusUI(request ,response)
-                );
+                login.authStatusUI(request ,response));
             response.send(html);
         });
     });
@@ -131,15 +131,14 @@ router.get('/:pageId', (request, response, next) => {
                 var list = template.list(filelist);
                 var html = template.HTML(sanitizeTitle, list,
                     `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
-                    `<a href="/topic/create">create</a>
-                    <a href="/topic/update/${sanitizeTitle}">update</a>
+                    `<a href="/topic/create/">글쓰기</a>
+                    <a href="/topic/update/${sanitizeTitle}">글수정</a>
 
                     <form action="/topic/delete_process" method="post">
                         <input type="hidden" name="id" value="${sanitizeTitle}">
-                        <input type="submit" value="delete">
+                        <input type="submit" value="글삭제">
                     </form>`,
-                    login.authStatusUI(request ,response)
-                    );
+                    login.authStatusUI(request ,response));
                 response.send(html); 
             }   
         });

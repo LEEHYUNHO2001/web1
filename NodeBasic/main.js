@@ -4,16 +4,30 @@ const port = 3000
 
 var compression = require('compression');
 var helmet = require('helmet');
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
+
+app.use(helmet());
 
 var indexRouter = require('./routes/index');
 var topicRouter = require('./routes/topic');
+var loginRouter = require('./routes/loginSession');
 
-app.use(helmet());
+
 app.use(express.static('public'));
 app.use(compression());
+app.use(session({
+    HttpOnly:true,
+    secure: true,
+    secret: 'asdfasdfasdf',
+    resave: false,
+    saveUninitialized: true,
+    store:new FileStore()
+}))
 
 app.use('/', indexRouter)
 app.use('/topic', topicRouter)
+app.use('/auth', loginRouter)
 
 app.use(function(request, response, next){
     response.status(404).send('Can not page!!!');

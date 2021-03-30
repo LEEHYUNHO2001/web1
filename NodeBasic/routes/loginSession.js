@@ -6,12 +6,6 @@ const path = require('path');
 var bodyParser = require('body-parser');
 
 
-var authData = {
-    email: 'dlgusgh2001@naver.com',
-    password: '1111',
-    nickname: 'dlgusgh2001'
-}
-
 //login
 router.get('/login', (request, response) => {
     fs.readdir('./data', function(error, filelist){
@@ -28,6 +22,21 @@ router.get('/login', (request, response) => {
     });        
 });
 
+var passport = require('../lib/passport.js')(router);
+
+//현재 flash가 session에 저장되지 않는 문제가 있음
+router.post('/login_process',
+    passport.authenticate('local', {failureFlash:true, failureRedirect: '/auth/login'}), 
+    
+    (request, response) => {
+        request.session.save(function(){
+            response.redirect('/');   
+        });
+    }
+);
+
+
+/*
 //login submit -> if가 참이면 정보 저장 후 home로 리다이렉션
 router.post('/login_process', (request, response) => {
     var post = request.body;
@@ -44,12 +53,13 @@ router.post('/login_process', (request, response) => {
     }
     response.end();
 });
+*/
 
 //logout -> session delete
 router.get('/logout', (request, response) => {
-    request.session.destroy(function(err){
+    request.logout();
+    request.session.save(function(){
         response.redirect('/');
-
     });  
 });
 module.exports = router;

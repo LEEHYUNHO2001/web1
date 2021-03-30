@@ -5,8 +5,7 @@ const fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
-//var login = require('../Cookie/logincookie.js');
-var login = require('../Cookie/loginsession.js');
+var login = require('../Cookie/loginpassport.js');
 
 router.use(bodyParser.urlencoded({extended: false}));
 

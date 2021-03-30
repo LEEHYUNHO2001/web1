@@ -1,36 +1,48 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const fs = require('fs');
+const path = require('path');
 
 var compression = require('compression');
 var helmet = require('helmet');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+var bodyParser = require('body-parser');
 
-app.use(helmet());
+app.use(helmet()); //secure
 
 var indexRouter = require('./routes/index');
 var topicRouter = require('./routes/topic');
 var loginRouter = require('./routes/loginSession');
 
-
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static('public'));
 app.use(compression());
+
 app.use(session({
     HttpOnly:true,
-    secure: true,
+    //secure: true,
     secret: 'asdfasdfasdf',
     resave: false,
     saveUninitialized: true,
     store:new FileStore()
 }))
 
+var passport = require('passport'),
+  LocalStrategy = require('passport-local').Strategy;
+var flash = require('connect-flash');
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(flash());
+
 app.use('/', indexRouter)
 app.use('/topic', topicRouter)
 app.use('/auth', loginRouter)
 
+
 app.use(function(request, response, next){
-    response.status(404).send('Can not page!!!');
+    response.status(404).send('페이지를 찾을 수 없습니다.');
 });
 
 app.use(function(err, request, response, next){

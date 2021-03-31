@@ -10,7 +10,7 @@ module.exports = {
 
     //logout (login status)
     authStatusUI : function(request, response){
-        var authStatusUI = '<a href="/auth/login">로그인</a>';
+        var authStatusUI = '<a href="/auth/login">로그인</a> | <a href="/auth2/register">회원가입</a>';
         if(this.authIsOwner(request, response)){
             authStatusUI = `닉네임 : ${request.user.nickname}<br><a href="/auth/logout">로그아웃</a>`;
         }

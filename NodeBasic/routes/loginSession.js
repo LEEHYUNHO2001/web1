@@ -5,12 +5,13 @@ const fs = require('fs');
 const path = require('path');
 var bodyParser = require('body-parser');
 
+var passport = require('../lib/passport.js')(router);
 
 //login
 router.get('/login', (request, response) => {
     fs.readdir('./data', function(error, filelist){
         var title = 'login';
-        var list = template.list(filelist);
+        var list = template.list(request.list);
         var html = template.HTML(title, list,
             `<form action="/auth/login_process" method="post">
                 <p><input type="text" name="email" placeholder="email"></p>
@@ -22,9 +23,9 @@ router.get('/login', (request, response) => {
     });        
 });
 
-var passport = require('../lib/passport.js')(router);
 
-//현재 flash가 session에 저장되지 않는 문제가 있음
+
+//login_process 현재 flash가 session에 저장되지 않는 문제가 있음
 router.post('/login_process',
     passport.authenticate('local', {failureFlash:true, failureRedirect: '/auth/login'}), 
     
@@ -35,26 +36,6 @@ router.post('/login_process',
     }
 );
 
-
-/*
-//login submit -> if가 참이면 정보 저장 후 home로 리다이렉션
-router.post('/login_process', (request, response) => {
-    var post = request.body;
-    var email = post.email;
-    var password = post.password;
-    if(email === authData.email && password === authData.password){
-        request.session.is_logined = true;
-        request.session.nickname = authData.nickname;
-        request.session.save(function(){
-        response.redirect('/');
-        });
-    } else {
-        response.send('Who??');
-    }
-    response.end();
-});
-*/
-
 //logout -> session delete
 router.get('/logout', (request, response) => {
     request.logout();
@@ -62,4 +43,5 @@ router.get('/logout', (request, response) => {
         response.redirect('/');
     });  
 });
+
 module.exports = router;

@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "id": "NVGaDDbGz",
+      "email": "dlgusgh2001@naver.com",
+      "password": "$2b$10$/fHtyl4wWO3NiN1Qke7.auQ02unwihN3slfr7TOKVOPy5Wa0ELDsC",
+      "nickname": "이현호"
+    },
+    {
+      "id": "-lk2u9ZXk",
+      "email": "gksrnrtktlfma@nate.com",
+      "password": "$2b$10$6trU6k.dTYdt4S9221W17.rx5epRBsJUSTKXpcZ7VYG/zHblHNnMG",
+      "nickname": "한국"
+    },
+    {
+      "id": "XE24VlvJT",
+      "email": "router@register.com",
+      "password": "$2b$10$OZldKQi4LjlVa9/7EUaU8.qI6bPjv/bKCwW/2yAPCN2Vx.8goGv6S",
+      "nickname": "register"
+    }
+  ],
+  "topics": [
+    {
+      "id": "_wWA9_7Wz",
+      "title": "Test",
+      "description": "아아아아아",
+      "user_id": "NVGaDDbGz"
+    },
+    {
+      "id": "Puy7MvCmC",
+      "title": "Hello",
+      "description": "하이하이",
+      "user_id": "-lk2u9ZXk"
+    },
+    {
+      "id": "JJ9zF8I43",
+      "title": "Node",
+      "description": "1111",
+      "user_id": "NVGaDDbGz"
+    },
+    {
+      "id": "LOJO1D3n5",
+      "title": "router",
+      "description": "register~~!",
+      "user_id": "XE24VlvJT"
+    }
+  ]
+}

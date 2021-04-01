@@ -24,6 +24,7 @@ var topicRouter = require('./routes/topic');
 var loginRouter = require('./routes/loginSession');
 var registerRouter = require('./routes/register');
 
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static('public'));
 app.use(compression());
@@ -48,6 +49,7 @@ app.use('/', indexRouter)
 app.use('/topic', topicRouter)
 app.use('/auth', loginRouter)
 app.use('/auth2', registerRouter)
+
 
 
 app.use(function(request, response, next){

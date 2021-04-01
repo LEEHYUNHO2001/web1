@@ -6,6 +6,7 @@ var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
 var login = require('../Cookie/loginpassport.js');
+var comment = require('../lib/comment.js');
 var shortid = require('shortid');
 var db = require('../lib/db');
 
@@ -118,14 +119,13 @@ router.post('/delete_process', (request, response) => {
 //Home else
 router.get('/:pageId', (request, response, next) => {
     var topic = db.get('topics').find({id:request.params.pageId}).value();
-    var user = db.get('users') .find({id:topic.user_id}).value();  
+    var user = db.get('users') .find({id:topic.user_id}).value();
     var sanitizeTitle = sanitizeHtml(topic.title);
     var sanitizeDescription = sanitizeHtml(topic.description, {allowedTags:['h1']});
     var list = template.list(request.list);
     var html = template.HTML(sanitizeTitle, list,
-        `<h2>${sanitizeTitle}</h2>
-        ${sanitizeDescription}
-        <p>작성자 : ${user.nickname}</p>`,
+        comment.commentUI(request, response)
+        ,
         `<a href="/topic/create/">글쓰기</a>
         <a href="/topic/update/${topic.id}">글수정</a>
 
@@ -135,6 +135,27 @@ router.get('/:pageId', (request, response, next) => {
         </form>`,
         login.authStatusUI(request ,response));
     response.send(html);    
+});
+
+//comment
+router.post('/comment_process', (request, response) => {
+    //login 접근 제어
+    if(login.loginRequire(request, response) === false){return false;} 
+
+    var post = request.body;
+    var title = post.title;
+    var description = post.description;
+    var id = post.id;
+    db.get('comments').push({
+        id:id, // 글 제목 id
+        title:title,
+        description:description,
+        user_id:request.user.id, // 작성자 id
+        nickname:request.user.nickname  //작성자 닉네임
+    }).write();
+    response.redirect(`/topic/${id}`);
+    
+
 });
 
 module.exports = router;

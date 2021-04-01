@@ -21,9 +21,7 @@ router.get('/login', (request, response) => {
             '');
     response.send(html);  
     });        
-});
-
-
+}); 
 
 //login_process 현재 flash가 session에 저장되지 않는 문제가 있음
 router.post('/login_process',

@@ -12,16 +12,7 @@ router.use(cookieParser());
 router.use(bodyParser.urlencoded({extended: false}));
 
 //Home
-router.get('/', (request, response) => {
-    /*
-    var fmsg = request.flash();
-    var feedback = '';
-    if(fmsg.success){
-      feedback = fmsg.success[0];
-    } else if (fmsg.error) {
-        feedback = fmsg.error[0];
-    }
-    */
+router.get('/', (request, response) => {   
     var title = 'Node.js 게시판';
     var description = `<a href="https://github.com/LEEHYUNHO2001/web1/tree/master" 
                         target="_blank" title="github 주소">클릭 GitHub</a>`;

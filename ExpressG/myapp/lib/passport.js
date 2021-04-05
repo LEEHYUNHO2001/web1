@@ -1,10 +1,17 @@
 module.exports = function(router){
 
-    var authData = {
-        email: 'dlgusgh2001@naver.com',
-        password: '1111',
-        nickname: 'dlgusgh2001'
-    }
+//pg
+const {Client} = require('pg');
+const Query = require('pg').Query
+
+var client = new Client({
+    user : 'postgres', 
+    host : 'localhost', 
+    database : 'postgres', 
+    password : 'ejsvkrhfo44!', 
+    port : 5432,
+})
+
 
     var passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy;
@@ -18,36 +25,48 @@ module.exports = function(router){
     passport.use(new LocalStrategy(
     {
         usernameField: 'email',
-        passwordField: 'password'
-    },
-    function (username, password, done) {
-        if(username === authData.email){
-            if(password === authData.password){
-                console.log('로그인 성공');
-                return done(null, authData);
-            } else{
-                console.log('비번 틀림');
-                return done(null, false, {
-                    message: '비밀번호가 틀렸습니다.'
-                });
+        passwordField: 'password',
+        session:true
+    }, (email, password, done) => {
+    
+        client.connect(err => { 
+            if (err) { 
+                console.error('연결 실패', err.stack)
+            } else { 
+                console.log('연결 성공');
             }
-        } else {
-            console.log('아이디 틀림');
-            return done(null, false, {
-                message: '없는 사용자 입니다.'
-            });
+        });
+                                
+        var userquery = new Query(`SELECT * FROM users`);
+        client.query(userquery, (err, res) => {
+            var user = false;
+            for(var i=0 ; i < res.rows.length ; i++){
+                if(res.rows[i].email === email && res.rows[i].password === password){
+                    user = res.rows[i];
+                }
+            }
+            console.log('user 값 : ',user);
+            if(user){
+                console.log('로그인 성공');
+                return done(null, user);
+            } else{
+                console.log('로그인 실패');
+                return done(null, false);
+            }
+            client.end();
         }
-    }
-    ));
+    );   
+}));
 
     passport.serializeUser(function(user, done){
         console.log('1: ',user);
         done(null, user.email);
     });
     passport.deserializeUser(function(id, done){
-        console.log('2 : ',id);
-        done(null, authData);
+        var user = client.query(`SELECT id FROM users WHERE users.id = ${id}`);
+        console.log('2 : ',id, user);
+        done(null, user);
     });
-
+    
     return passport;
 }

@@ -15,6 +15,7 @@ app.use(helmet()); //secure
 var indexRouter = require('./routes/index');
 var topicRouter = require('./routes/topic');
 var loginRouter = require('./routes/loginSession');
+var registerRouter = require('./routes/register');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static('public'));
@@ -53,6 +54,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/topic', topicRouter);
 app.use('/auth', loginRouter);
+app.use('/customer', registerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

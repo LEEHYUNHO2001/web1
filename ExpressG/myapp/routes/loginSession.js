@@ -52,44 +52,6 @@ router.get('/logout', (request, response) => {
     request.session.save(function(){
         response.redirect('/');
     });  
-});
-
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-db.defaults({users:[]}).write();
-
-
-router.get('/register', (request, response) => {
-    fs.readdir('./data', function(error, filelist){
-        var title = 'register';
-        var list = template.list(filelist);
-        var html = template.HTML(title, list,
-            `<form action="/auth/register_process" method="post">
-                <p><input type="text" name="email" placeholder="email" value="dlgusgh2001@naver.com"></p>
-                <p><input type="password" name="password" placeholder="password" value="1111"></p>
-                <p><input type="password" name="password2" placeholder="password" value="1111"></p>
-                <p><input type="text" name="nickname" placeholder="nick name" value="dlgusgh"></p>
-                <p><input type="submit" value="register"></p>
-            </form>`,
-            '');
-    response.send(html);  
-    });        
-});
-
-router.post('/register_process', (request, response) => {
-    var post = request.body;
-    var email = post.email;
-    var password = post.password;
-    var password2 = post.password2;
-    var nickname = post.nickname;
-    db.get('users').push({
-        email:email,
-        password:password,
-        nickname:nickname
-    }).write();
-    response.redirect('/');
-});
+}); 
 
 module.exports = router;

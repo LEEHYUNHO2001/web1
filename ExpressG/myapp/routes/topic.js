@@ -42,21 +42,6 @@ router.post('/create_process', (request, response) => {
     fs.writeFile(`data/${title}`, description, `utf8`, function(err){
         response.redirect(`/topic/${title}`);
     });
-    /*
-    //express 사용 전
-    var body ='';
-    request.on('data', function(data){
-        body=body + data;
-    });
-    request.on('end', function(){
-        var post = qs.parse(body);
-        var title = post.title;
-        var description = post.description;
-        fs.writeFile(`data/${title}`, description, `utf8`, function(err){
-            response.redirect(`/page/${title}`);
-        });
-    });
-    */
 });
 
 //update

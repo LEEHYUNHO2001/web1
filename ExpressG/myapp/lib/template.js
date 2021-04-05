@@ -1,6 +1,6 @@
 module.exports = {
     HTML:function(title, list, body, control, 
-        authStatusUI = '<a href="/auth/login">로그인</a>  | <a href="/auth/register">회원가입</a>'){
+        authStatusUI = '<a href="/auth/login">로그인</a>  | <a href="/customer/register">회원가입</a>'){
         return `
     <!doctype html>
     <html>

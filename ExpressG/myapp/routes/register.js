@@ -20,7 +20,6 @@ router.use(session({
 //pg
 const {Client} = require('pg');
 const Query = require('pg').Query
-
 var client = new Client({
     user : 'postgres', 
     host : 'localhost', 
@@ -34,7 +33,6 @@ function userDatabase(id, email, password, nickname){
     CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(50), nickname VARCHAR(10));
     INSERT INTO users (id, email, password, nickname) VALUES('${id}', '${email}', '${password}', '${nickname}')`);
     client.query(userquery)
-
 }
 
 //registerUI
@@ -73,11 +71,12 @@ router.post('/register_process', (request, response) => {
     } else{
         client.connect(err => { 
             if (err) { 
-                console.error('connection error', err.stack)
+                console.error('회원가입 pg 연결 실패', err.stack)
             } else { 
-                userDatabase(id, email, password, nickname);
+                console.log('연결 성공')
             } 
         });
+        userDatabase(id, email, password, nickname);
         response.redirect('/');
     }
 });

@@ -45,27 +45,25 @@ var client = new Client({
                     user = res.rows[i];
                 }
             }
-            console.log('user 값 : ',user);
+
             if(user){
                 console.log('로그인 성공');
                 return done(null, user);
             } else{
                 console.log('로그인 실패');
                 return done(null, false);
-            }
-            client.end();
-        }
-    );   
+            }   
+        });
+          
 }));
 
     passport.serializeUser(function(user, done){
-        console.log('1: ',user);
-        done(null, user.email);
+        console.log('serialize: ',user);
+        done(null, user.id);
     });
     passport.deserializeUser(function(id, done){
-        var user = client.query(`SELECT id FROM users WHERE users.id = ${id}`);
-        console.log('2 : ',id, user);
-        done(null, user);
+        console.log('desrialize : ',id);
+        done(null, id);
     });
     
     return passport;

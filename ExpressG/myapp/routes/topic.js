@@ -6,17 +6,30 @@ var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
 var login = require('../Cookie/loginpassport.js');
-
+var shortid = require('shortid');
+var passport = require('../lib/passport.js')(router);
 router.use(bodyParser.urlencoded({extended: false}));
+
+//pg
+const {Client} = require('pg');
+const Query = require('pg').Query
+
+var client = new Client({
+    user : 'postgres', 
+    host : 'localhost', 
+    database : 'postgres', 
+    password : 'ejsvkrhfo44!', 
+    port : 5432,
+})
+
+
 
 //create
 router.get('/create', (request, response) => {
     //login 접근 제어
     if(login.loginRequire(request, response) === false){return false;}
-    fs.readdir('./data', function(error, filelist){
         var title = 'Web - create';
-        var list = template.list(filelist);
-        var html = template.HTML(title, list,`
+        var html = template.HTML(title, '',`
         <form action="/topic/create_process"
         method="post">
             <p><input type="text" name="title" placeholder="title"></p>
@@ -30,18 +43,32 @@ router.get('/create', (request, response) => {
         `, 
         '',
         login.authStatusUI(request ,response));
-        response.send(html);
-    });      
+        response.send(html);  
 });
+
+function createDatabase(id, title, description, users_id){
+    const createquery = new Query(`
+    CREATE TABLE IF NOT EXISTS topics (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
+    INSERT INTO topics (id, title, description, users_id) VALUES('${id}', '${title}', '${description}', '${users_id}')`);
+    client.query(createquery)
+}
 
 //create submit -> data directory에 저장
 router.post('/create_process', (request, response) => {
     var post = request.body;
     var title = post.title;
     var description = post.description;
-    fs.writeFile(`data/${title}`, description, `utf8`, function(err){
-        response.redirect(`/topic/${title}`);
+    var id = shortid.generate();
+    client.connect(err => { 
+        if (err) { 
+            console.error('connection error', err.stack)
+        } else { 
+            console.log('connection good')
+        }
+        
     });
+    createDatabase(id, title, description, request.user); 
+    response.redirect(`/topic/${id}`);
 });
 
 //update
@@ -102,31 +129,30 @@ router.post('/delete_process', (request, response) => {
 });
 
 //Home else
-router.get('/:pageId', (request, response, next) => {
-    fs.readdir('./data', function(error, filelist){         
-        var filteredId = path.parse(request.params.pageId).base;          
-        fs.readFile(`data/${filteredId}`, `utf8`, function(err, description){
-            if(err){
-                next(err);
-             } else {
-                var title = request.params.pageId;
-                var sanitizeTitle = sanitizeHtml(title);
-                var sanitizeDescription = sanitizeHtml(description, {allowedTags:['h1']});
-                var list = template.list(filelist);
-                var html = template.HTML(sanitizeTitle, list,
-                    `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
-                    `<a href="/topic/create/">글쓰기</a>
-                    <a href="/topic/update/${sanitizeTitle}">글수정</a>
-
-                    <form action="/topic/delete_process" method="post">
-                        <input type="hidden" name="id" value="${sanitizeTitle}">
-                        <input type="submit" value="글삭제">
-                    </form>`,
-                    login.authStatusUI(request ,response));
-                response.send(html); 
-            }   
-        });
-    });           
+router.get('/:pageId', (request, response, next) => {       
+    const topicquery = new Query(`SELECT * FROM topics`);
+    client.query(topicquery, (err, res) => {
+        var topic = false;
+        for(var i=0 ; i < res.rows.length ; i++){
+            if(res.rows[i].id === request.params.pageId){
+                topic = res.rows[i];
+            }
+        }
+        var sanitizeTitle = sanitizeHtml(topic.title);
+        var sanitizeDescription = sanitizeHtml(topic.description, {allowedTags:['h1']});
+        var list = template.list(res.rows);
+        var html = template.HTML(sanitizeTitle, list,
+            `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+            `<a href="/topic/create/">글쓰기</a>
+            <a href="/topic/update/${sanitizeTitle}">글수정</a>
+    
+            <form action="/topic/delete_process" method="post">
+                <input type="hidden" name="id" value="${sanitizeTitle}">
+                <input type="submit" value="글삭제">
+            </form>`,
+            login.authStatusUI(request ,response));
+        response.send(html); 
+    }) 
 });
 
 module.exports = router;

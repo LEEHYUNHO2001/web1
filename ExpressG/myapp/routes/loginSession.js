@@ -15,7 +15,7 @@ router.use(session({
     resave: false,
     saveUninitialized: true,
     store:new FileStore()
-  }))
+}))
 
 //login
 router.get('/login', (request, response) => {
@@ -41,7 +41,7 @@ router.post('/login_process',
     
     (request, response) => {
         request.session.save(function(){
-            response.redirect('/');   
+            response.redirect('/');
         });
     }
 );

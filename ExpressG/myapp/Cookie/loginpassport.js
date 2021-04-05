@@ -12,7 +12,7 @@ module.exports = {
     authStatusUI : function(request, response){
         var authStatusUI = '<a href="/auth/login">로그인</a> | <a href="/customer/register">회원가입</a>';
         if(this.authIsOwner(request, response)){ 
-            authStatusUI = `닉네임 : ${request.nickname}<br><a href="/auth/logout">로그아웃</a>`;
+            authStatusUI = `닉네임 : ${request.user.id}<br><a href="/auth/logout">로그아웃</a>`;
         }
         return authStatusUI;
     },

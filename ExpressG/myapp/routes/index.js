@@ -10,21 +10,50 @@ var login = require('../Cookie/loginpassport.js');
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({extended: false}));
 
+//pg
+const {Client} = require('pg');
+const Query = require('pg').Query
+
+var client = new Client({
+    user : 'postgres', 
+    host : 'localhost', 
+    database : 'postgres', 
+    password : 'ejsvkrhfo44!', 
+    port : 5432,
+})
+
 //Home
 router.get('/', (request, response) => {
-    fs.readdir('./data', function(error, filelist){
+
+    client.connect(err => { 
+        if (err) { 
+            console.error('Home 연결 에러', err.stack);
+        } else { 
+            console.log('connection good');
+        }
+        
+    });
+
+    const topicquery = new Query(`SELECT * FROM topics`);
+    client.query(topicquery, (err, res) => {
+        var topic = false;
+        for(var i=0 ; i < res.rows.length ; i++){
+            if(res.rows[i].id === request.params.pageId){
+                topic = res.rows[i];
+            }
+        }
         var title = 'Node.js 게시판';
         var description = `<a href="https://github.com/LEEHYUNHO2001/web1/tree/master" 
                             target="_blank" title="github 주소">클릭 GitHub</a>`;
-        var list = template.list(filelist);
+        var list = template.list(res.rows);
         var html = template.HTML(title, list,
             `<h2>${title}</h2>${description}
             <img src="/images/view.jpg" style="width:300px; display:block; margin-top:10px">`,
             `<a href="/topic/create">글쓰기</a>`,
             login.authStatusUI(request, response)
             ); 
-    response.send(html);
-    });                
+        response.send(html); 
+    }) 
 });
 
 module.exports = router;

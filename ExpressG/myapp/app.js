@@ -12,7 +12,6 @@ var bodyParser = require('body-parser');
 
 app.use(helmet()); //secure
 
-
 var indexRouter = require('./routes/index');
 var topicRouter = require('./routes/topic');
 var loginRouter = require('./routes/loginSession');

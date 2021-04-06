@@ -37,10 +37,8 @@ function userDatabase(id, email, password, nickname){
 
 //registerUI
 router.get('/register', (request, response) => {
-    fs.readdir('./data', function(error, filelist){
         var title = 'register';
-        var list = template.list(filelist);
-        var html = template.HTML(title, list,
+        var html = template.HTML(title, '',
             `<form action="/customer/register_process" method="post">
                 <p><input type="text" name="email" placeholder="email"></p>
                 <p><input type="password" name="password" placeholder="password"></p>
@@ -50,7 +48,7 @@ router.get('/register', (request, response) => {
             </form>`,
             '');
     response.send(html);  
-    });        
+      
 });
 
 var shortid = require('shortid');

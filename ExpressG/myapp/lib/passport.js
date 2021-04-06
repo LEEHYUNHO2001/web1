@@ -37,14 +37,9 @@ var client = new Client({
             }
         });
                                 
-        var userquery = new Query(`SELECT * FROM users`);
+        var userquery = new Query(`SELECT * FROM users WHERE email='${email}' AND password='${password}'`);
         client.query(userquery, (err, res) => {
-            var user = false;
-            for(var i=0 ; i < res.rows.length ; i++){
-                if(res.rows[i].email === email && res.rows[i].password === password){
-                    user = res.rows[i];
-                }
-            }
+            var user = res.rows[0];
 
             if(user){
                 console.log('로그인 성공');

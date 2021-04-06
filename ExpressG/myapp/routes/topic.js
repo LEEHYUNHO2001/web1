@@ -5,8 +5,10 @@ const fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
-var login = require('../Cookie/loginpassport.js');
+var login = require('../lib/loginstatus.js');
+//var CRUD = require('../lib/CRUD.js');  -> db에 create한 값 저장하기전에 rediret해서 버그남
 var shortid = require('shortid');
+
 router.use(bodyParser.urlencoded({extended: false}));
 
 //pg

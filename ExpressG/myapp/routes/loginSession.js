@@ -19,10 +19,8 @@ router.use(session({
 
 //login
 router.get('/login', (request, response) => {
-    fs.readdir('./data', function(error, filelist){
         var title = 'login';
-        var list = template.list(filelist);
-        var html = template.HTML(title, list,
+        var html = template.HTML(title, '',
             `<form action="/auth/login_process" method="post">
                 <p><input type="text" name="email" placeholder="email"></p>
                 <p><input type="password" name="password" placeholder="password"></p>
@@ -30,7 +28,7 @@ router.get('/login', (request, response) => {
             </form>`,
             '');
     response.send(html);  
-    });        
+      
 });
 
 var passport = require('../lib/passport.js')(router);

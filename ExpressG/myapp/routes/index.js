@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var login = require('../Cookie/loginpassport.js');
+var login = require('../lib/loginstatus.js');
 
 router.use(cookieParser());
 router.use(bodyParser.urlencoded({extended: false}));

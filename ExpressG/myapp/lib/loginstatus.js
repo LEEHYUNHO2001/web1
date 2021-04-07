@@ -48,7 +48,7 @@ module.exports = {
                 return false
             })*/
         if(this.authIsOwner(request, response)){ 
-            authStatusUI = `닉네임 : sss <br><a href="/auth/logout">로그아웃</a>`;
+            authStatusUI = `사용자id값 : ${request.user} <br><a href="/auth/logout">로그아웃</a>`;
         }
         return authStatusUI;
     },

@@ -6,6 +6,10 @@ const path = require('path');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+var shortid = require('shortid');
+var flash = require('connect-flash');
+
+router.use(flash());
 
 //session 설정
 router.use(session({
@@ -27,6 +31,13 @@ var client = new Client({
     password : 'ejsvkrhfo44!', 
     port : 5432,
 })
+client.connect(err => { 
+    if (err) { 
+        console.error('회원가입 pg 연결 실패', err.stack)
+    } else { 
+        console.log('연결 성공')
+    } 
+});
 
 function userDatabase(id, email, password, nickname){
     const userquery = new Query(`
@@ -37,21 +48,28 @@ function userDatabase(id, email, password, nickname){
 
 //registerUI
 router.get('/register', (request, response) => {
-        var title = 'register';
-        var html = template.HTML(title, '',
-            `<form action="/customer/register_process" method="post">
-                <p><input type="text" name="email" placeholder="email"></p>
-                <p><input type="password" name="password" placeholder="password"></p>
-                <p><input type="password" name="password2" placeholder="password"></p>
-                <p><input type="text" name="nickname" placeholder="nick name"></p>
-                <p><input type="submit" value="register"></p>
-            </form>`,
-            '');
+    var fmsg = request.flash();
+    var feedback = '';
+    if(fmsg.success){
+        feedback = fmsg.success[0];
+    } else if(fmsg.error){
+        feedback.error[0];
+    }
+
+    var title = 'register';
+    var html = template.HTML(title, '',
+        `<div style="color:red;">${feedback}</div>
+        <form action="/customer/register_process" method="post">
+            <p><input type="text" name="email" placeholder="email"></p>
+            <p><input type="password" name="password" placeholder="password"></p>
+            <p><input type="password" name="password2" placeholder="password"></p>
+            <p><input type="text" name="nickname" placeholder="nick name"></p>
+            <p><input type="submit" value="register"></p>
+        </form>`,
+        '');
     response.send(html);  
       
 });
-
-var shortid = require('shortid');
 
 router.post('/register_process', (request, response) => {
     var post = request.body;
@@ -62,18 +80,11 @@ router.post('/register_process', (request, response) => {
     var id=shortid.generate();
     
     if(password != password2){
-        request.flash('error', '비밀번호를 확인해주세요');
+        request.flash('error', '비밀번호가 다릅니다.');
         request.session.save(function(){
             response.redirect('/customer/register');
         });  
     } else{
-        client.connect(err => { 
-            if (err) { 
-                console.error('회원가입 pg 연결 실패', err.stack)
-            } else { 
-                console.log('연결 성공')
-            } 
-        });
         userDatabase(id, email, password, nickname);
         response.redirect('/');
     }

@@ -1,9 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var template = require('../lib/template.js');
-const fs = require('fs');
-const path = require('path');
-var bodyParser = require('body-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 

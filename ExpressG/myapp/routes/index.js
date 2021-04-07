@@ -33,6 +33,7 @@ client.connect(err => {
 
 //Home
 router.get('/', (request, response) => {
+
     const topicquery = new Query(`SELECT * FROM topics`);
     client.query(topicquery, (err, res) => {
         var title = 'Node.js 게시판';

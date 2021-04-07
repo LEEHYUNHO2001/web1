@@ -1,17 +1,15 @@
 module.exports = function(router){
+    //pg
+    const {Client} = require('pg');
+    const Query = require('pg').Query
 
-//pg
-const {Client} = require('pg');
-const Query = require('pg').Query
-
-var client = new Client({
-    user : 'postgres', 
-    host : 'localhost', 
-    database : 'postgres', 
-    password : 'ejsvkrhfo44!', 
-    port : 5432,
-})
-
+    var client = new Client({
+        user : 'postgres', 
+        host : 'localhost', 
+        database : 'postgres', 
+        password : 'ejsvkrhfo44!', 
+        port : 5432,
+    })
 
     var passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy;
@@ -60,6 +58,5 @@ var client = new Client({
         console.log('desrialize : ',id);
         done(null, id);
     });
-    
     return passport;
 }

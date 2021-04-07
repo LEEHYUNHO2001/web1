@@ -1,3 +1,5 @@
+var bcrypt = require('bcrypt');
+
 module.exports = function(router){
     //pg
     const {Client} = require('pg');
@@ -33,21 +35,25 @@ module.exports = function(router){
             } else { 
                 console.log('연결 성공');
             }
-        });
-                                
-        var userquery = new Query(`SELECT * FROM users WHERE email='${email}' AND password='${password}'`);
+        });                       
+        var userquery = new Query(`SELECT * FROM users WHERE email='${email}'`);
         client.query(userquery, (err, res) => {
             var user = res.rows[0];
-
             if(user){
-                console.log('로그인 성공');
-                return done(null, user);
+                bcrypt.compare(password, user.password, function(err, result){
+                    if(result){
+                        console.log('로그인 성공');
+                        return done(null, user);
+                    } else{
+                        console.log('없는 비밀번호입니다.');
+                        return done(null, false);            
+                    }
+                })
             } else{
-                console.log('로그인 실패');
+                console.log('없는 아이디입니다.');
                 return done(null, false);
             }   
-        });
-          
+        });      
 }));
 
     passport.serializeUser(function(user, done){

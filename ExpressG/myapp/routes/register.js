@@ -8,6 +8,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var shortid = require('shortid');
 var flash = require('connect-flash');
+var bcrypt = require('bcrypt');
 
 router.use(flash());
 
@@ -41,7 +42,7 @@ client.connect(err => {
 
 function userDatabase(id, email, password, nickname){
     const userquery = new Query(`
-    CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(50), nickname VARCHAR(10));
+    CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(100), nickname VARCHAR(10));
     INSERT INTO users (id, email, password, nickname) VALUES('${id}', '${email}', '${password}', '${nickname}')`);
     client.query(userquery)
 }
@@ -85,8 +86,16 @@ router.post('/register_process', (request, response) => {
             response.redirect('/customer/register');
         });  
     } else{
-        userDatabase(id, email, password, nickname);
-        response.redirect('/');
+        bcrypt.hash(password, 10, function(err, hash){
+            var user = {
+                id:id,
+                email:email,
+                password:hash,
+                nickname:nickname
+            }
+            userDatabase(user.id, user.email, user.password, user.nickname);
+            response.redirect('/');
+        })
     }
 });
  

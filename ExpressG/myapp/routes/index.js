@@ -24,7 +24,6 @@ const topicquery = {
 
 //Home
 router.get('/', (request, response) => {
-
     client
         .query(topicquery)
         .then(res => { 

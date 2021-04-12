@@ -9,8 +9,7 @@ var FileStore = require('session-file-store')(session);
 var shortid = require('shortid');
 var flash = require('connect-flash');
 var bcrypt = require('bcrypt');
-
-router.use(flash());
+var CRUD = require('../lib/CRUD.js');
 
 //session 설정
 router.use(session({
@@ -21,36 +20,22 @@ router.use(session({
     saveUninitialized: true,
     store:new FileStore()
   }))
- 
+
+router.use(flash());
+
 //pg
 const {Client} = require('pg');
 const Query = require('pg').Query
 const config = require('../lib/config.js');
 var client = new Client(config)
-
-client.connect(err => { 
-    if (err) { 
-        console.error('회원가입 pg 연결 실패', err.stack)
-    } else { 
-        console.log('연결 성공')
-    } 
-});
-
-function userDatabase(id, email, password, nickname){
-    const userquery = new Query(`
-    CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(100), nickname VARCHAR(10));
-    INSERT INTO users (id, email, password, nickname) VALUES('${id}', '${email}', '${password}', '${nickname}')`);
-    client.query(userquery)
-}
+client.connect()
 
 //registerUI
 router.get('/register', (request, response) => {
     var fmsg = request.flash();
     var feedback = '';
-    if(fmsg.success){
-        feedback = fmsg.success[0];
-    } else if(fmsg.error){
-        feedback.error[0];
+    if(fmsg.error){
+        feedback = fmsg.error;
     }
 
     var title = 'register';
@@ -64,8 +49,7 @@ router.get('/register', (request, response) => {
             <p><input type="submit" value="register"></p>
         </form>`,
         '');
-    response.send(html);  
-      
+    response.send(html);   
 });
 
 router.post('/register_process', (request, response) => {
@@ -89,7 +73,7 @@ router.post('/register_process', (request, response) => {
                 password:hash,
                 nickname:nickname
             }
-            userDatabase(user.id, user.email, user.password, user.nickname);
+            CRUD.userDatabase(user.id, user.email, user.password, user.nickname);
             response.redirect('/');
         })
     }

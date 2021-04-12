@@ -6,7 +6,7 @@ var sanitizeHtml = require('sanitize-html');
 var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
 var login = require('../lib/loginstatus.js');
-//var CRUD = require('../lib/CRUD.js');  -> db에 create한 값 저장하기전에 rediret해서 버그남
+var CRUD = require('../lib/CRUD.js');
 var shortid = require('shortid');
 
 router.use(bodyParser.urlencoded({extended: false}));
@@ -14,14 +14,9 @@ router.use(bodyParser.urlencoded({extended: false}));
 //pg
 const {Client} = require('pg');
 const Query = require('pg').Query
-
-var client = new Client({
-    user : 'postgres', 
-    host : 'localhost', 
-    database : 'postgres', 
-    password : 'ejsvkrhfo44!', 
-    port : 5432,
-})
+const config = require('../lib/config.js');
+var client = new Client(config)
+client.connect()
 
 //create
 router.get('/create', (request, response) => {
@@ -45,46 +40,6 @@ router.get('/create', (request, response) => {
         response.send(html);  
 });
 
-function createDatabase(id, title, description, users_id){
-    client.connect(err => { 
-        if (err) { 
-            console.error('connection error', err.stack)
-        } else { 
-            console.log('connection good')
-        }   
-    });
-    const createquery = new Query(`
-    CREATE TABLE IF NOT EXISTS topics (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
-    INSERT INTO topics (id, title, description, users_id) VALUES('${id}', '${title}', '${description}', '${users_id}')`);
-    client.query(createquery)
-}
-
-function deleteDatabase(id){
-    client.connect(err => { 
-        if (err) { 
-            console.error('connection error', err.stack)
-        } else { 
-            console.log('connection good')
-        }   
-    });
-    const deletequery = new Query(`
-    DELETE FROM topics WHERE id='${id}'`);
-    client.query(deletequery)
-}
-
-function updateDatabase(title, description, id){
-    client.connect(err => { 
-        if (err) { 
-            console.error('connection error', err.stack)
-        } else { 
-            console.log('connection good')
-        }   
-    });
-    const updatequery = new Query(`
-    UPDATE topics SET title='${title}', description='${description}' WHERE id='${id}'`);
-    client.query(updatequery)
-}
-
 //create process
 router.post('/create_process', (request, response) => {
     var post = request.body;
@@ -92,47 +47,52 @@ router.post('/create_process', (request, response) => {
     var description = post.description;
     var id = shortid.generate();
     console.log(request)
-    createDatabase(id, title, description, request.user);
+    CRUD.createDatabase(id, title, description, request.user);
     response.redirect(`/topic/${id}`);
 });
 
 //update
 router.get('/update/:pageId', (request, response) => {
     //login 접근 제어
-    if(login.loginRequire(request, response) === false){return false;}
+    if(login.loginRequire(request, response) === false){return false;} 
 
-    client.connect(err => { 
-        if (err) { 
-            console.error('connection error', err.stack)
-        } else { 
-            console.log('connection good')
-        }   
-    });    
-    const topicquery = new Query(`SELECT * FROM topics`);
-    client.query(topicquery, (err, res) => {
-        var topic = false;
-        for(var i=0 ; i < res.rows.length ; i++){
-            if(res.rows[i].id === request.params.pageId){
-                topic = res.rows[i];
-            }
-        }
-        var title = topic.title;
-        var description = topic.description;
-        var list = template.list(res.rows);
-        var html = template.HTML(title, list,
-            `<form action="/topic/update_process"
-            method="post">
-                <input type="hidden" name="id" value="${topic.id}">
-                <input type="hidden" name="users_id" value="${topic.users_id}">
-                <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-                <p><textarea name="description" placeholder="description">${description}</textarea></p>
-                <p><input type="submit"></p>
-            </form>`,
-            `<a href="/topic/create">create</a>
-            <a href="/topic/update/${topic.id}">update</a>`,
-            login.authStatusUI(request ,response));
-        response.send(html); 
-        }) 
+    const topicRedirect = {
+        text: `SELECT * FROM topics WHERE id = '${request.params.pageId}'`,
+        rowMode: 'dictionary',
+      }
+    client
+        .query(topicRedirect)
+        .then(res => {
+            var topicRe = res.rows[0];
+            return topicRe
+        })
+        .then(topicRe => {
+            const topicquery = {
+                text: 'SELECT * FROM topics',
+                rowMode: 'dictionary',
+              }
+            client
+                .query(topicquery)
+                .then(res => {
+                    var topic = res.rows;
+                    var title = topicRe.title;
+                    var description = topicRe.description;
+                    var list = template.list(res.rows);
+                    var html = template.HTML(title, list,
+                        `<form action="/topic/update_process"
+                        method="post">
+                            <input type="hidden" name="id" value="${topicRe.id}">
+                            <input type="hidden" name="users_id" value="${topicRe.users_id}">
+                            <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+                            <p><textarea name="description" placeholder="description">${description}</textarea></p>
+                            <p><input type="submit"></p>
+                        </form>`,
+                        `<a href="/topic/create">글쓰기</a>
+                        <a href="/topic/update/${topicRe.id}">글수정</a>`,
+                        login.authStatusUI(request ,response));
+                    response.send(html);
+                })
+        })
 });
 
 //update process
@@ -145,7 +105,7 @@ router.post('/update_process', (request, response) => {
     if(users_id != request.user){
         return response.redirect(`/topic/${id}`);
     }
-    updateDatabase(title, description, id);
+    CRUD.updateDatabase(title, description, id);
     response.redirect(`/topic/${id}`);
               
 });
@@ -161,44 +121,50 @@ router.post('/delete_process', (request, response) => {
     if(users_id != request.user){
         return response.redirect(`/topic/${id}`);
     }
-    deleteDatabase(id);
+    CRUD.deleteDatabase(id);
     response.redirect('/');
 });
 
 //Home else
-router.get('/:pageId', (request, response, next) => {   
-    client.connect(err => { 
-        if (err) { 
-            console.error('connection error', err.stack)
-        } else { 
-            console.log('connection good')
-        }   
-    });    
-    const topicquery = new Query(`SELECT * FROM topics`);
-    client.query(topicquery, (err, res) => {
-        var topic = false;
-        for(var i=0 ; i < res.rows.length ; i++){
-            if(res.rows[i].id === request.params.pageId){
-                topic = res.rows[i];
-            }
-        }
-        var sanitizeTitle = sanitizeHtml(topic.title);
-        var sanitizeDescription = sanitizeHtml(topic.description, {allowedTags:['h1']});
-        var list = template.list(res.rows);
-        var html = template.HTML(sanitizeTitle, list,
-            `<h2>${sanitizeTitle}</h2>${sanitizeDescription}
-            <p>사용자 값 : ${topic.users_id}</p>`,
-            `<a href="/topic/create/">글쓰기</a>
-            <a href="/topic/update/${topic.id}">글수정</a>
-
-            <form action="/topic/delete_process" method="post">
-                <input type="hidden" name="id" value="${topic.id}">
-                <input type="hidden" name="users_id" value="${topic.users_id}">
-                <input type="submit" value="글삭제">
-            </form>`,
-            login.authStatusUI(request ,response));
-        response.send(html); 
-    }) 
+router.get('/:pageId', (request, response) => {
+    const topicRedirect = {
+        text: `SELECT * FROM topics WHERE id = '${request.params.pageId}'`,
+        rowMode: 'dictionary',
+    }
+    client
+        .query(topicRedirect)
+        .then(res => {
+            var topicRe = res.rows[0];
+            return topicRe
+        })
+        .then(topicRe => {
+            const topicquery = {
+                text: 'SELECT * FROM topics',
+                rowMode: 'dictionary',
+              }
+            client
+                .query(topicquery)
+                .then(res => {
+                    var topic = res.rows;
+                    var sanitizeTitle = sanitizeHtml(topicRe.title);
+                    var sanitizeDescription = sanitizeHtml(topicRe.description, {allowedTags:['h1']});
+                    var list = template.list(res.rows);
+                    var html = template.HTML(sanitizeTitle, list,
+                        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}
+                        <p>사용자 값 : ${topicRe.users_id}</p>`,
+                        `<a href="/topic/create/">글쓰기</a>
+                        <a href="/topic/update/${topicRe.id}">글수정</a>
+            
+                        <form action="/topic/delete_process" method="post">
+                            <input type="hidden" name="id" value="${topicRe.id}">
+                            <input type="hidden" name="users_id" value="${topicRe.users_id}">
+                            <input type="submit" value="글삭제">
+                        </form>`,
+                        login.authStatusUI(request ,response));
+                    response.send(html);
+                })
+        })
+        .catch(err => console.error('뭔가 오류남',err.stack))       
 });
 
 module.exports = router;

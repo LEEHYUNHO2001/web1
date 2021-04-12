@@ -25,13 +25,9 @@ router.use(session({
 //pg
 const {Client} = require('pg');
 const Query = require('pg').Query
-var client = new Client({
-    user : 'postgres', 
-    host : 'localhost', 
-    database : 'postgres', 
-    password : 'ejsvkrhfo44!', 
-    port : 5432,
-})
+const config = require('../lib/config.js');
+var client = new Client(config)
+
 client.connect(err => { 
     if (err) { 
         console.error('회원가입 pg 연결 실패', err.stack)

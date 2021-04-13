@@ -25,7 +25,6 @@ router.use(flash());
 
 //pg
 const {Client} = require('pg');
-const Query = require('pg').Query
 const config = require('../lib/config.js');
 var client = new Client(config)
 client.connect()

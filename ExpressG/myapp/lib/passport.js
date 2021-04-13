@@ -3,7 +3,6 @@ var bcrypt = require('bcrypt');
 module.exports = function(router){
     //pg
     const {Client} = require('pg');
-    const Query = require('pg').Query
     const config = require('../lib/config.js');
     var client = new Client(config)
     client.connect()
@@ -23,10 +22,7 @@ module.exports = function(router){
         passwordField: 'password',
         session:true
     }, (email, password, done) => {               
-        const userEmail = {
-            text: `SELECT * FROM users WHERE email='${email}'`,
-            rowMode: 'dictionary',
-        }
+        const userEmail = `SELECT * FROM users WHERE email='${email}';`;
         client
             .query(userEmail)
             .then(res => {

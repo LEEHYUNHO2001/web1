@@ -1,8 +1,8 @@
 //pg
 const {Client} = require('pg');
-const Query = require('pg').Query
 const config = require('../lib/config.js');
 var client = new Client(config)
+client.connect()
 
 module.exports = {
     //login check    
@@ -12,37 +12,23 @@ module.exports = {
         } else{
             return false;
         }
-    }/*,
+    },
 
     //search Nickname
-    Nickname : function(request){
-        return new Promise((resolve, reject) => {
-            var userquery = new Query(`SELECT nickname FROM users WHERE id='${request.user}'`);
-            client.query(userquery, (err, res) => {
-                if (err){
-                    console.log(err);
-                    reject(err);
-                } else{
-                    resolve(res.rows[0]);
-                }
-
-            })
-        })
-    }*/,
+    Nickname : async function(request){
+        const userNick = `SELECT nickname FROM users WHERE id='${request.user}';`
+        var clientquery = await client.query(userNick);
+        var nickname = await clientquery.rows[0].nickname;
+        return nickname
+    },
 
     //logout (login status)
-    authStatusUI : function(request, response){
+    authStatusUI : async function(request, response){
         var authStatusUI = '<a href="/auth/login">로그인</a> | <a href="/customer/register">회원가입</a>';
-       /* var nickname = this.Nickname(request)
-            .then((nickname) => {
-                console.log('닉네임 : ',nickname)
-            })
-            .catch((err) => {
-                console.log(err)
-                return false
-            })*/
+        
         if(this.authIsOwner(request, response)){ 
-            authStatusUI = `사용자id값 : ${request.user} <br><a href="/auth/logout">로그아웃</a>`;
+            var nickname = await this.Nickname(request)
+            authStatusUI = `닉네임 : ${nickname} <br><a href="/auth/logout">로그아웃</a>`;
         }
         return authStatusUI;
     },

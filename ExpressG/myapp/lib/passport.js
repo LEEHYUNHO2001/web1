@@ -34,7 +34,9 @@ module.exports = function(router){
                             return done(null, user);
                         } else{
                             console.log('없는 비밀번호입니다.');
-                            return done(null, false);            
+                            return done(null, false, {
+                                message: 'ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
+                            });            
                         }
                     })
                 } else{

@@ -8,35 +8,23 @@ var bodyParser = require('body-parser');
 var login = require('../lib/loginstatus.js');
 var CRUD = require('../lib/CRUD.js');
 var shortid = require('shortid');
+var body = require('../lib/body.js')
 
 router.use(bodyParser.urlencoded({extended: false}));
 
 //pg
 const {Client} = require('pg');
 const config = require('../lib/config.js');
-const { response, request } = require('express');
 var client = new Client(config)
 client.connect()
 
 //create
-router.get('/create', (request, response) => {
+router.get('/create', async (request, response) => {
     //login 접근 제어
     if(login.loginRequire(request, response) === false){return false;}
         var title = 'Web - create';
-        var html = template.HTML(title, '',`
-        <form action="/topic/create_process"
-        method="post">
-            <p><input type="text" name="title" placeholder="title"></p>
-            <p>
-                <textarea name="description" placeholder="description"></textarea>
-            </p>
-            <p>
-                <input type="submit">
-            </p>
-        </form>               
-        `, 
-        '',
-        login.authStatusUI(request ,response));
+        var html = template.HTML(title, '',body.create(), '',
+        await login.authStatusUI(request ,response));
         response.send(html);  
 });
 
@@ -68,15 +56,7 @@ router.get('/update/:pageId', async (request, response) => {
     var title = topicRe.title;
     var description = topicRe.description;
     var list = template.list(topic);
-    var html = template.HTML(title, list,
-        `<form action="/topic/update_process"
-        method="post">
-            <input type="hidden" name="id" value="${topicRe.id}">
-            <input type="hidden" name="users_id" value="${topicRe.users_id}">
-            <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-            <p><textarea name="description" placeholder="description">${description}</textarea></p>
-            <p><input type="submit"></p>
-        </form>`,
+    var html = template.HTML(title, list,body.update(topicRe),
         `<a href="/topic/create">글쓰기</a>
         <a href="/topic/update/${topicRe.id}">글수정</a>`,
         await login.authStatusUI(request ,response));
@@ -132,15 +112,7 @@ router.get('/:pageId', async (request, response) => {
     var list = template.list(topic);
     var html = template.HTML(sanitizeTitle, list,
         `<h2>${sanitizeTitle}</h2>${sanitizeDescription}
-        <p>닉네임 : ${nickname}</p>`,
-        `<a href="/topic/create/">글쓰기</a>
-        <a href="/topic/update/${topicRe.id}">글수정</a>
-
-        <form action="/topic/delete_process" method="post">
-            <input type="hidden" name="id" value="${topicRe.id}">
-            <input type="hidden" name="users_id" value="${topicRe.users_id}">
-            <input type="submit" value="글삭제">
-        </form>`,
+        <p>닉네임 : ${nickname}</p>`,body.homeelse(topicRe),
         await login.authStatusUI(request ,response));
     response.send(html);
 });

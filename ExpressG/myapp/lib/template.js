@@ -18,6 +18,7 @@ module.exports = {
         </body>
     </html>`;
     }, page:function(filelist){
+        console.log('파일리스트 : ',filelist.length)
         var pagelength = filelist.length;
         var j=1;
         var page = `<a href="/${j}">[${j}] </a>`;

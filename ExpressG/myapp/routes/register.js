@@ -10,16 +10,7 @@ var shortid = require('shortid');
 var flash = require('connect-flash');
 var bcrypt = require('bcrypt');
 var CRUD = require('../lib/CRUD.js');
-
-//session 설정
-router.use(session({
-    HttpOnly:true,
-    //secure: true,
-    secret: 'asdfasdfasdf',
-    resave: false,
-    saveUninitialized: true,
-    store:new FileStore()
-  }))
+var body = require('../lib/body.js');
 
 router.use(flash());
 
@@ -38,16 +29,7 @@ router.get('/register', (request, response) => {
     }
 
     var title = 'register';
-    var html = template.HTML(title, '',
-        `<div style="color:red;">${feedback}</div>
-        <form action="/customer/register_process" method="post">
-            <p><input type="text" name="email" placeholder="email"></p>
-            <p><input type="password" name="password" placeholder="password"></p>
-            <p><input type="password" name="password2" placeholder="password"></p>
-            <p><input type="text" name="nickname" placeholder="nick name"></p>
-            <p><input type="submit" value="register"></p>
-        </form>`,
-        '');
+    var html = template.HTML(title, '', body.register(feedback),'');
     response.send(html);   
 });
 

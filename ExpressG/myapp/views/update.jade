@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+    form(action="/topic/update_process" method="post")
+      p
+        input(type="hidden" name="id" value="#{topicRe.id}")
+        input(type="hidden" name="users_id" value="#{topicRe.users_id}")
+        input(type="text" name="title" placeholder="title" value="#{topicRe.title}")
+        textarea(name="description" placeholder="description") #{topicRe.description}
+        input(type="submit")
+      include list

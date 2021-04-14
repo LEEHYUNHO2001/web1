@@ -3,13 +3,13 @@ var router = express.Router()
 const path = require('path');
 const fs = require('fs');
 var sanitizeHtml = require('sanitize-html');
-var template = require('../lib/template.js');
 var bodyParser = require('body-parser');
 var login = require('../lib/loginstatus.js');
 var CRUD = require('../lib/CRUD.js');
 var shortid = require('shortid');
-var body = require('../lib/body.js')
+var flash = require('connect-flash');
 
+router.use(flash());
 router.use(bodyParser.urlencoded({extended: false}));
 
 //pg
@@ -19,83 +19,87 @@ var client = new Client(config)
 client.connect()
 
 //create
-router.get('/create', async (request, response) => {
-    //login 접근 제어
-    if(login.loginRequire(request, response) === false){return false;}
-        var title = 'Web - create';
-        var html = template.HTML(title, '',body.create(), '',
-        await login.authStatusUI(request ,response));
-        response.send(html);  
+router.get('/create', async (req, res) => {
+    if(!req.user){
+        login.accesslogin(req, res)
+    }else{
+        res.locals.authIsOwner = await req.user;
+        res.locals.nickname = await login.LoginNick(req);
+        res.locals.title = '글쓰기';
+        res.render('create');
+    }
 });
 
 //create process
-router.post('/create_process', (request, response) => {
-    var post = request.body;
+router.post('/create_process', (req, res) => {
+    var post = req.body;
     var title = post.title;
     var description = post.description;
     var id = shortid.generate();
-    console.log(request)
-    CRUD.createDatabase(id, title, description, request.user);
-    response.redirect(`/topic/${id}`);
+    CRUD.createDatabase(id, title, description, req.user);
+    res.redirect(`/topic/${id}`);
 });
 
-
 //update
-router.get('/update/:pageId', async (request, response) => {
-    //login 접근 제어
-    if(login.loginRequire(request, response) === false){return false;} 
+router.get('/update/:pageId', async (req, res) => {
+    if(!req.user){
+        login.accesslogin(req, res)
+    }else{
+        const topicRedirect = `SELECT * FROM topics WHERE id = '${req.params.pageId}';`;
+        var clientquery1 = await client.query(topicRedirect)
+        var topicRe = clientquery1.rows[0];
 
-    const topicRedirect = `SELECT * FROM topics WHERE id = '${request.params.pageId}';`;
-    var clientquery1 = await client.query(topicRedirect)
-    var topicRe = clientquery1.rows[0];
+        const topicquery = 'SELECT * FROM topics;';
+        var clientquery2 = await client.query(topicquery)
+        var topic = clientquery2.rows;
 
-    const topicquery = 'SELECT * FROM topics;';
-    var clientquery2 = await client.query(topicquery)
-    var topic = clientquery2.rows;
-
-    var title = topicRe.title;
-    var description = topicRe.description;
-    var list = template.list(topic);
-    var html = template.HTML(title, list,body.update(topicRe),
-        `<a href="/topic/create">글쓰기</a>
-        <a href="/topic/update/${topicRe.id}">글수정</a>`,
-        await login.authStatusUI(request ,response));
-    response.send(html);
+        res.locals.authIsOwner = await req.user;
+        res.locals.nickname = await login.LoginNick(req)
+        res.locals.filelist = topic;
+        res.locals.topicRe = topicRe;
+        res.render('update');
+    }
 });
 
 //update process
-router.post('/update_process', (request, response) => {
-    var post = request.body;
+router.post('/update_process', (req, res) => {
+    var post = req.body;
     var title = post.title;
     var description = post.description;
     var id = post.id;
     var users_id = post.users_id;
-    if(users_id != request.user){
-        return response.redirect(`/topic/${id}`);
-    }
-    CRUD.updateDatabase(title, description, id);
-    response.redirect(`/topic/${id}`);
-              
+
+    //user 접근제어
+    if(users_id != req.user){
+        login.accessUser(req, res)
+    } else{
+        CRUD.updateDatabase(title, description, id);
+        res.redirect(`/topic/${id}`);
+    }          
 });
 
 //delete process
-router.post('/delete_process', (request, response) => {
-    //login 접근 제어
-    if(login.loginRequire(request, response) === false){return false;}
-    var post = request.body;
-    var id = post.id;
-    var users_id = post.users_id;
-    //user 접근제어
-    if(users_id != request.user){
-        return response.redirect(`/topic/${id}`);
+router.post('/delete_process', async (req, res) => {
+    //login 접근제어
+    if(!req.user){
+        login.accesslogin(req, res)
+    } else{
+        var post = req.body;
+        var id = post.id;
+        var users_id = post.users_id;
+        //user 접근제어
+        if(users_id != req.user){
+            login.accessUser(req, res)
+        } else{
+            CRUD.deleteDatabase(id);
+            res.redirect('/');
+        }
     }
-    CRUD.deleteDatabase(id);
-    response.redirect('/');
 });
 
 //Home else
-router.get('/:pageId', async (request, response) => {
-    const topicRedirect = `SELECT * FROM topics WHERE id = '${request.params.pageId}';`;
+router.get('/:pageId', async (req, res) => {
+    const topicRedirect = `SELECT * FROM topics WHERE id = '${req.params.pageId}';`;
     var clientquery1 = await client.query(topicRedirect)
     var topicRe = clientquery1.rows[0];
 
@@ -105,16 +109,17 @@ router.get('/:pageId', async (request, response) => {
 
     const topicNick = `SELECT nickname FROM users WHERE id='${topicRe.users_id}';`;
     var clientquery3 = await client.query(topicNick);
-    var nickname = clientquery3.rows[0].nickname;
+    var topicNickname = clientquery3.rows[0].nickname;
 
-    var sanitizeTitle = sanitizeHtml(topicRe.title);
-    var sanitizeDescription = sanitizeHtml(topicRe.description, {allowedTags:['h1']});
-    var list = template.list(topic);
-    var html = template.HTML(sanitizeTitle, list,
-        `<h2>${sanitizeTitle}</h2>${sanitizeDescription}
-        <p>닉네임 : ${nickname}</p>`,body.homeelse(topicRe),
-        await login.authStatusUI(request ,response));
-    response.send(html);
+    res.locals.authIsOwner = await req.user;
+    res.locals.sanitizeTitle = sanitizeHtml(topicRe.title);
+    res.locals.sanitizeDescription = sanitizeHtml(topicRe.description, {allowedTags:['h1']});
+    res.locals.topicRe = topicRe;
+    res.locals.topicNickname = topicNickname;
+    res.locals.filelist = topic;
+    res.locals.nickname = await login.LoginNick(req)
+    res.render('homeelse');
+
 });
 
 module.exports = router;

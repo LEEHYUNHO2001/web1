@@ -1,0 +1,9 @@
+login
+    if authIsOwner
+        div
+            p 닉네임 : #{nickname}
+            a(href="/auth/logout") 로그아웃
+    else
+        div
+            a(href="/auth/login") 로그인 | 
+            a(href="/customer/register") 회원가입

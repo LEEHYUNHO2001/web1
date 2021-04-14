@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var template = require('../lib/template.js');
 const fs = require('fs');
 const path = require('path');
 var bodyParser = require('body-parser');
@@ -10,7 +9,7 @@ var shortid = require('shortid');
 var flash = require('connect-flash');
 var bcrypt = require('bcrypt');
 var CRUD = require('../lib/CRUD.js');
-var body = require('../lib/body.js');
+var login = require('../lib/loginstatus.js');
 
 router.use(flash());
 
@@ -21,16 +20,17 @@ var client = new Client(config)
 client.connect()
 
 //registerUI
-router.get('/register', (request, response) => {
+router.get('/register', async (request, response) => {
     var fmsg = request.flash();
     var feedback = '';
     if(fmsg.error){
         feedback = fmsg.error;
     }
 
-    var title = 'register';
-    var html = template.HTML(title, '', body.register(feedback),'');
-    response.send(html);   
+    response.locals.title = 'register';
+    response.locals.feedback = feedback;
+    response.locals.authStatusUI = await login.authStatusUI(request ,response);
+    response.render('register');
 });
 
 router.post('/register_process', (request, response) => {
@@ -43,8 +43,8 @@ router.post('/register_process', (request, response) => {
     
     if(password != password2){
         request.flash('error', '비밀번호가 다릅니다.');
-        request.session.save(function(){
-            response.redirect('/customer/register');
+        return request.session.save(function(){
+            return response.redirect('/customer/register');
         });  
     } else{
         bcrypt.hash(password, 10, function(err, hash){

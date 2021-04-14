@@ -1,0 +1,33 @@
+list
+    ol
+        -var maxpost=3;
+        -if(!pageId){
+            -for(var j=0 ; j<maxpost ; j++){
+                li
+                    a(href="/topic/" + filelist[j].id) #{filelist[j].title}
+            -}
+        -} else{
+            -for(var i = 1 ; i <= filelist.length/maxpost +1 ; i++){
+                -if(pageId === `${i}`){
+                    -var next = maxpost*i -maxpost;
+                    -for(var j=0 ; j<maxpost ; j++){
+                        li
+                            a(href="/topic/" + filelist[j+next].id) #{filelist[j+next].title}
+                        -if(filelist.length % maxpost === j+1 && i === parseInt(filelist.length/maxpost) +1){
+                            -break;
+                        -}   
+                    -}
+                -}
+            -}
+        -}
+    -var pagelength = filelist.length;
+    a(href="/" + 1) [1]
+    -var maxpost = 3;
+    -var j = 1;
+    -for(var i=0; i < filelist.length; i++){
+        -if( pagelength > maxpost ){
+                -j++;
+                a(href="/" + j) [#{j}]
+                -pagelength -=maxpost;    
+            -}  
+        -}

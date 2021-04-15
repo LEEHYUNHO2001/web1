@@ -37,10 +37,10 @@ router.get('/create', async (req, res) => {
 
 //create process
 router.post('/create_process', async (req, res) => {
+    var loginID = await req.user;
     var post = await req.body;
     var title = await post.title;
     var description = await post.description;
-    var loginID = await req.user;
     var id = shortid.generate();
     CRUD.createDatabase(id, title, description, loginID);
     res.redirect(`/topic/${id}`);
@@ -107,6 +107,7 @@ router.post('/delete_process', async (req, res) => {
     }
 });
 
+
 //Home else
 router.get('/:pageId', async (req, res) => {
     const topicRedirect = `SELECT * FROM topics WHERE id = '${req.params.pageId}';`;
@@ -121,6 +122,9 @@ router.get('/:pageId', async (req, res) => {
     var clientquery3 = await client.query(topicNick);
     var topicNickname = clientquery3.rows[0].nickname;
     var loginID = await req.user;
+    
+    //page기능 안쓰니까 선언만 해줌.
+    var startPage = [];
 
     res.render('homeelse',{
         sanitizeTitle:sanitizeHtml(topicRe.title),
@@ -129,7 +133,8 @@ router.get('/:pageId', async (req, res) => {
         filelist:topic,
         topicRe:topicRe,
         topicNickname:topicNickname,
-        nickname:await login.LoginNick(req)
+        nickname:await login.LoginNick(req),
+        startPage:startPage
     });
 });
 

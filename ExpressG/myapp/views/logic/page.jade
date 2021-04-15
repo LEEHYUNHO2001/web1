@@ -1,0 +1,21 @@
+page
+    -var pagelength = filelist.length;
+    -var limit = 5;
+    -var pageNum = 1;
+    -var currentPage = 0;
+    -if(pageId && startPage[currentPage] != '1'){
+        a(href="/" + (parseInt(startPage[currentPage]) -1)) 이전
+    -}
+    -console.log('startPage', startPage)
+    -console.log('startPage length', currentPage)
+    a(href="/" + pageNum) [#{pageNum}]
+    -for(var i=0; i < filelist.length; i++){
+        -if( pagelength > limit ){
+                -pageNum++;
+                a(href="/" + pageNum) [#{pageNum}]
+                -pagelength -=limit;    
+            -}
+        -}
+    -if(pageId && startPage[currentPage] != pageNum){
+        a(href="/" + (parseInt(startPage[currentPage]) +1)) 다음
+    -}

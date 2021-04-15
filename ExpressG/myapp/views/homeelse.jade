@@ -1,7 +1,8 @@
 extends layout
 
 block content
-  include list
+  include logic/list
+  include logic/page.jade
   h1 #{sanitizeTitle} 
   h2 #{sanitizeDescription}
   p 작성자 : #{topicNickname}

@@ -1,15 +1,5 @@
 list
-    -var pagelength = filelist.length;
-    a(href="/" + 1) [1]
     -var limit = 5;
-    -var j = 1;
-    -for(var i=0; i < filelist.length; i++){
-        -if( pagelength > limit ){
-                -j++;
-                a(href="/" + j) [#{j}]
-                -pagelength -=limit;    
-            -}  
-        -}
     ol
         -var maxPage=filelist.length;
         -var skip = (pageId-1)*limit;

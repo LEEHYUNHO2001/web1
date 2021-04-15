@@ -20,29 +20,36 @@ client.connect()
 
 //create
 router.get('/create', async (req, res) => {
-    if(!req.user){
+    var loginID = await req.user;
+    if(!loginID){
         login.accesslogin(req, res)
     }else{
-        res.locals.authIsOwner = await req.user;
+        res.locals.authIsOwner = await loginID;
         res.locals.nickname = await login.LoginNick(req);
         res.locals.title = '글쓰기';
-        res.render('create');
+        res.render('create', {
+            title:'글쓰기',
+            authIsOwner:await loginID,
+            nickname:await login.LoginNick(req)
+        });
     }
 });
 
 //create process
-router.post('/create_process', (req, res) => {
-    var post = req.body;
-    var title = post.title;
-    var description = post.description;
+router.post('/create_process', async (req, res) => {
+    var post = await req.body;
+    var title = await post.title;
+    var description = await post.description;
+    var loginID = await req.user;
     var id = shortid.generate();
-    CRUD.createDatabase(id, title, description, req.user);
+    CRUD.createDatabase(id, title, description, loginID);
     res.redirect(`/topic/${id}`);
 });
 
 //update
 router.get('/update/:pageId', async (req, res) => {
-    if(!req.user){
+    var loginID = await req.user;
+    if(!loginID){
         login.accesslogin(req, res)
     }else{
         const topicRedirect = `SELECT * FROM topics WHERE id = '${req.params.pageId}';`;
@@ -53,24 +60,26 @@ router.get('/update/:pageId', async (req, res) => {
         var clientquery2 = await client.query(topicquery)
         var topic = clientquery2.rows;
 
-        res.locals.authIsOwner = await req.user;
-        res.locals.nickname = await login.LoginNick(req)
-        res.locals.filelist = topic;
-        res.locals.topicRe = topicRe;
-        res.render('update');
+        res.render('update', {
+            authIsOwner:await loginID,
+            nickname:await login.LoginNick(req),
+            filelist:topic,
+            topicRe:topicRe
+        });
     }
 });
 
 //update process
-router.post('/update_process', (req, res) => {
-    var post = req.body;
-    var title = post.title;
-    var description = post.description;
-    var id = post.id;
-    var users_id = post.users_id;
+router.post('/update_process', async (req, res) => {
+    var post = await req.body;
+    var title = await post.title;
+    var description = await post.description;
+    var id = await post.id;
+    var users_id = await post.users_id;
 
     //user 접근제어
-    if(users_id != req.user){
+    var loginID = await req.user;
+    if(users_id != loginID){
         login.accessUser(req, res)
     } else{
         CRUD.updateDatabase(title, description, id);
@@ -81,14 +90,15 @@ router.post('/update_process', (req, res) => {
 //delete process
 router.post('/delete_process', async (req, res) => {
     //login 접근제어
-    if(!req.user){
+    var loginID = await req.user;
+    if(!loginID){
         login.accesslogin(req, res)
     } else{
-        var post = req.body;
-        var id = post.id;
-        var users_id = post.users_id;
+        var post = await req.body;
+        var id = await post.id;
+        var users_id = await post.users_id;
         //user 접근제어
-        if(users_id != req.user){
+        if(users_id != loginID){
             login.accessUser(req, res)
         } else{
             CRUD.deleteDatabase(id);
@@ -110,16 +120,17 @@ router.get('/:pageId', async (req, res) => {
     const topicNick = `SELECT nickname FROM users WHERE id='${topicRe.users_id}';`;
     var clientquery3 = await client.query(topicNick);
     var topicNickname = clientquery3.rows[0].nickname;
+    var loginID = await req.user;
 
-    res.locals.authIsOwner = await req.user;
-    res.locals.sanitizeTitle = sanitizeHtml(topicRe.title);
-    res.locals.sanitizeDescription = sanitizeHtml(topicRe.description, {allowedTags:['h1']});
-    res.locals.topicRe = topicRe;
-    res.locals.topicNickname = topicNickname;
-    res.locals.filelist = topic;
-    res.locals.nickname = await login.LoginNick(req)
-    res.render('homeelse');
-
+    res.render('homeelse',{
+        sanitizeTitle:sanitizeHtml(topicRe.title),
+        sanitizeDescription:sanitizeHtml(topicRe.description, {allowedTags:['h1']}),
+        authIsOwner:await loginID,
+        filelist:topic,
+        topicRe:topicRe,
+        topicNickname:topicNickname,
+        nickname:await login.LoginNick(req)
+    });
 });
 
 module.exports = router;

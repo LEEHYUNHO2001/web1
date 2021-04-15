@@ -4,6 +4,7 @@ block content
   include list
   h1 #{sanitizeTitle} 
   h2 #{sanitizeDescription}
+  p 작성자 : #{topicNickname}
   p
     a(href="/topic/create") 글쓰기 | 
     a(href="/topic/update/" + topicRe.id) 글수정
@@ -14,4 +15,4 @@ block content
          input(type="hidden" name="users_id" value="#{topicRe.users_id}")
          input(type="submit" value="글삭제")
 
-    p 닉네임 : #{topicNickname}
+  

@@ -26,11 +26,12 @@ router.get('/register', async (request, response) => {
     if(fmsg.error){
         feedback = fmsg.error;
     }
-
-    response.locals.title = 'register';
-    response.locals.feedback = feedback;
-    response.locals.authStatusUI = await login.authStatusUI(request ,response);
-    response.render('register');
+    
+    response.render('register', {
+        title:'register',
+        feedback:feedback,
+        authStatusUI:await login.LoginNick(request ,response)
+    });
 });
 
 router.post('/register_process', (request, response) => {

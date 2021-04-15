@@ -23,14 +23,15 @@ const HomePageUI = async (req, res) => {
     if(fmsg.error){
         feedback = fmsg.error;
     }
-    
-    res.locals.authIsOwner = await req.user;
-    res.locals.feedback = feedback;
-    res.locals.filelist = topic;
-    res.locals.pageId = req.params.pageId;
-    res.locals.title = 'Node.js 게시판';
-    res.locals.nickname = await login.LoginNick(req)
-    res.render('index');
+
+    res.render('index', {
+        title:'Node.js 게시판',
+        feedback:feedback,
+        filelist:topic,
+        authIsOwner:await req.user,
+        pageId:await req.params.pageId,
+        nickname:await login.LoginNick(req)
+    });
 }
 
 //Home

@@ -6,9 +6,10 @@ var passport = require('../lib/passport.js')(router);
 
 //login
 router.get('/login', async (req, res) => {
-    res.locals.authIsOwner = await req.user;
-    res.locals.title = '로그인';
-    res.render('login');    
+    res.render('login',{
+        title:'로그인',
+        authIsOwner: req.user
+    });    
 });
 
 //현재 flash가 session에 저장되지 않는 문제가 있음

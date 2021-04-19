@@ -20,44 +20,53 @@ var client = new Client(config)
 client.connect()
 
 //registerUI
-router.get('/register', async (request, response) => {
-    var fmsg = request.flash();
-    var feedback = '';
-    if(fmsg.error){
-        feedback = fmsg.error;
+router.get('/register', async (req, res) => {
+    try{
+        //flash사용
+        var fmsg = req.flash();
+        var feedback = '';
+        if(fmsg.error){
+            feedback = fmsg.error;
+        }
+        
+        res.render('register', {
+            title:'register',
+            feedback:feedback,
+            authStatusUI:await login.LoginNick(req ,res)
+        });
+    } catch(err){
+        console.log('registerUI에러', err);
     }
-    
-    response.render('register', {
-        title:'register',
-        feedback:feedback,
-        authStatusUI:await login.LoginNick(request ,response)
-    });
 });
 
-router.post('/register_process', (request, response) => {
-    var post = request.body;
-    var email = post.email;
-    var password = post.password;
-    var password2 = post.password2;
-    var nickname = post.nickname;
-    var id=shortid.generate();
-    
-    if(password != password2){
-        request.flash('error', '비밀번호가 다릅니다.');
-        return request.session.save(function(){
-            return response.redirect('/customer/register');
-        });  
-    } else{
-        bcrypt.hash(password, 10, function(err, hash){
-            var user = {
-                id:id,
-                email:email,
-                password:hash,
-                nickname:nickname
-            }
-            CRUD.userDatabase(user.id, user.email, user.password, user.nickname);
-            response.redirect('/');
-        })
+router.post('/register_process', (req, res) => {
+    try{
+        var post = req.body;
+        var email = post.email;
+        var password = post.password;
+        var password2 = post.password2;
+        var nickname = post.nickname;
+        var id=shortid.generate();
+        
+        if(password != password2){
+            req.flash('error', '비밀번호가 다릅니다.');
+            return req.session.save(() => {
+                return res.redirect('/customer/register');
+            });  
+        } else{
+            bcrypt.hash(password, 10, (err, hash) => {
+                var user = {
+                    id:id,
+                    email:email,
+                    password:hash,
+                    nickname:nickname
+                }
+                CRUD.userDatabase(user.id, user.email, user.password, user.nickname);
+                res.redirect('/');
+            })
+        }
+    } catch(err){
+        console.log('register_process에러', err);
     }
 });
  

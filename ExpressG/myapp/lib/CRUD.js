@@ -6,31 +6,46 @@ var client = new Client(config)
 client.connect()
 
 module.exports = {
-
-    createDatabase:function (id, title, description, users_id){
-        const createquery = new Query(`
-        CREATE TABLE IF NOT EXISTS topics (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
-        INSERT INTO topics (id, title, description, users_id) VALUES('${id}', '${title}', '${description}', '${users_id}')`);
-        client.query(createquery)
+    createDatabase: async (id, title, description, users_id) => {
+        try{
+            const createquery = new Query(`
+            CREATE TABLE IF NOT EXISTS topics (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
+            INSERT INTO topics (id, title, description, users_id) VALUES('${id}', '${title}', '${description}', '${users_id}')`);
+            client.query(createquery)
+        } catch(err){
+            console.log('createquery에러', err);
+        }
     },
     
-    deleteDatabase:function (id){
-        console.log('함수 안에서 id 값',id)
-        const deletequery = new Query(`
-        DELETE FROM topics WHERE id='${id}'`);
-        client.query(deletequery)
+    deleteDatabase: async (id) => {
+        try{
+            console.log('함수 안에서 id 값',id)
+            const deletequery = new Query(`
+            DELETE FROM topics WHERE id='${id}'`);
+            client.query(deletequery)
+        } catch(err){
+            console.log('deletequery에러');
+        }
     },
     
-    updateDatabase:function (title, description, id){
-        const updatequery = new Query(`
-        UPDATE topics SET title='${title}', description='${description}' WHERE id='${id}'`);
-        client.query(updatequery)
+    updateDatabase: async (title, description, id) => {
+        try{
+            const updatequery = new Query(`
+            UPDATE topics SET title='${title}', description='${description}' WHERE id='${id}'`);
+            client.query(updatequery)
+        } catch(err){
+            console.log('updatequery에러', err);
+        }
     },
 
-    userDatabase:function (id, email, password, nickname){
-        const userquery = new Query(`
-        CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(100), nickname VARCHAR(10));
-        INSERT INTO users (id, email, password, nickname) VALUES('${id}', '${email}', '${password}', '${nickname}')`);
-        client.query(userquery)
+    userDatabase: async (id, email, password, nickname) => {
+        try{
+            const userquery = new Query(`
+            CREATE TABLE IF NOT EXISTS users (id VARCHAR(50), email VARCHAR(25), password VARCHAR(100), nickname VARCHAR(10));
+            INSERT INTO users (id, email, password, nickname) VALUES('${id}', '${email}', '${password}', '${nickname}')`);
+            client.query(userquery)
+        } catch(err){
+            console.log('userquery에러', err);
+        }
     }
 }

@@ -28,7 +28,7 @@ module.exports = function(router){
             .then(res => {
                 var user = res.rows[0];
                 if(user){
-                    bcrypt.compare(password, user.password, function(err, result){
+                    bcrypt.compare(password, user.password, (err, result) => {
                         if(result){
                             console.log('로그인 성공');
                             return done(null, user);
@@ -42,13 +42,13 @@ module.exports = function(router){
                     return done(null, false);
                 }   
             })
-            .catch(err => console.error('뭔가 오류남',err.stack))   
+            .catch(err => console.error('passport에러',err.stack))   
     }));
-    passport.serializeUser(function(user, done){
+    passport.serializeUser((user, done) => {
         console.log('serialize: ',user);
         done(null, user.id);
     });
-    passport.deserializeUser(function(id, done){
+    passport.deserializeUser((id, done) => {
         console.log('desrialize : ',id);
         done(null, id);
     });

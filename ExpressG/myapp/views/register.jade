@@ -2,12 +2,16 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
   div(style="color:red;") #{feedback}
   form(action="/customer/register_process" method="post")
       p 
-        input(type="text" name="email" placeholder="이메일")
-        input(type="password" name="password" placeholder="비밀번호")
-        input(type="password" name="password2" placeholder="비밀번호")
-        input(type="text" name="nickname" placeholder="닉네임")
-        input(type="submit" value="register")
+        p 아이디
+        input(type="text" name="email" placeholder="이메일" maxLength='25')
+        p 비밀번호
+        input(type="password" name="password" placeholder="비밀번호" maxLength='25')
+        p 비밀번호 확인
+        input(type="password" name="password2" placeholder="비밀번호" maxLength='25')
+        p 닉네임
+        input(type="text" name="nickname" placeholder="닉네임" maxLength='10')
+        p
+          input(type="submit" value="register")

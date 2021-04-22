@@ -38,7 +38,6 @@ router.get('/create', async (req, res) => {
     } catch(err){
         console.log('createUI에러', err);
     }
-
 });
 
 //create process
@@ -50,12 +49,7 @@ router.post('/create_process', async (req, res) => {
         var description = await post.description;
         var id = shortid.generate();
         await CRUD.createDatabase(id, title, description, loginID);
-        //redirect를 너무 빨리해버려서 0.5초 timeout걸어줌.
-        setTimeout(()=>{
-            res.redirect(`/topic/${id}`);
-        }, 500)
-
-
+        res.redirect(`/`);
     } catch(err){
         console.log('create_process에러', err);
     }

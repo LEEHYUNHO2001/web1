@@ -30,7 +30,7 @@ router.get('/register', async (req, res) => {
         }
         
         res.render('register', {
-            title:'register',
+            title:'회원가입',
             feedback:feedback,
             authStatusUI:await login.LoginNick(req ,res)
         });

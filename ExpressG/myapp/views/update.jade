@@ -5,7 +5,10 @@ block content
     form(action="/topic/update_process" method="post")
       p
         input(type="hidden" name="id" value="#{topicRe.id}")
+        p(style="font-size:15pt;") 제목
         input(type="hidden" name="users_id" value="#{topicRe.users_id}")
         input(type="text" name="title" placeholder="title" value="#{topicRe.title}")
-        textarea(name="description" placeholder="description") #{topicRe.description}
-        input(type="submit")
+        p(style="font-size:15pt;") 내용
+        textarea(name="description" placeholder="description" style="height:300px;width:500px;") #{topicRe.description}
+        p
+        input(type="submit" value="수정")

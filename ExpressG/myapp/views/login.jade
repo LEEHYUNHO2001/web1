@@ -4,6 +4,9 @@ block content
   h1= title
   form(action="/auth/login_process" method="post")
     p 
-      input(type="text" name="email" placeholder="이메일")
-      input(type="password" name="password" placeholder="비밀번호")
-      input(type="submit" value="로그인")
+      p 아이디
+      input(type="text" name="email" placeholder="이메일" maxLength='25')
+      p 비밀번호
+      input(type="password" name="password" placeholder="비밀번호" maxLength='25')
+      p
+        input(type="submit" value="로그인")

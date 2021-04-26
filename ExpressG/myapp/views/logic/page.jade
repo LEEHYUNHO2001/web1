@@ -2,9 +2,11 @@ page
     -var pagelength = filelist.length;
     -var limit = 5;
     -var pageNum = 1;
-    -var currentPage = 0;
-    -if(pageId && startPage[currentPage] != '1'){
-        a(href="/" + (parseInt(startPage[currentPage]) - 1)) 이전
+    -var prePage = parseInt(pageId) - 1;
+    -var nextPage = parseInt(pageId) + 1;
+
+    -if(pageId && pageId != '1'){
+        a(href="/" + prePage) 이전
     -}
     
     a(href="/" + pageNum) [#{pageNum}]
@@ -16,6 +18,7 @@ page
             -}
         -}
         
-    -if(pageId && startPage[currentPage] != pageNum){
-        a(href="/" + (parseInt(startPage[currentPage]) + 1)) 다음
+    -if(pageId && pageId != pageNum){
+        a(href="/" + nextPage) 다음
     -}
+

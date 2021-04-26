@@ -14,9 +14,6 @@ const config = require('../lib/config.js');
 var client = new Client(config)
 client.connect()
 
-//startPage 선언
-var startPage = [];
-
 const HomePageUI = async (req, res) => {
     try{
         var topic = await selectQ.topicquery();
@@ -28,21 +25,13 @@ const HomePageUI = async (req, res) => {
             feedback = fmsg.error;
         }
     
-        //startPage 배열값 길어지지 않게..
-        if(startPage.length >= 1){
-            startPage.pop([0]);
-        }
-        //현재 pageId 저장
-        startPage.push(req.params.pageId);
-    
         res.render('index', {
             title:'Node.js 게시판',
             feedback:feedback,
             filelist:topic,
             authIsOwner:await req.user,
             pageId:await req.params.pageId,
-            nickname:await login.LoginNick(req),
-            startPage:startPage
+            nickname:await login.LoginNick(req)
         });
     } catch(err){
         console.log('Home, pageUI에러', err)

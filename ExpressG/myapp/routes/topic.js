@@ -127,8 +127,6 @@ router.post('/delete_process', async (req, res) => {
 //Home else
 router.get('/:pageId', async (req, res) => {
     try{
-        //page기능 안쓰니까 선언만 해줌.
-        var startPage = [];
         var topicRe = await selectQ.topicRedirect(req.params.pageId);
         var topic = await selectQ.topicquery();
         var topicNickname = await selectQ.topicNick(topicRe);
@@ -140,8 +138,7 @@ router.get('/:pageId', async (req, res) => {
             filelist:topic,
             topicRe:await topicRe,
             topicNickname:await topicNickname,
-            nickname:await login.LoginNick(req),
-            startPage:startPage
+            nickname:await login.LoginNick(req)
                 });
     } catch(err){
         console.log('Home elseUI에러', err)

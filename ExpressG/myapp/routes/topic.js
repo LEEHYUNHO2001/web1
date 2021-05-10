@@ -29,7 +29,7 @@ router.get('/create', async (req, res) => {
             res.locals.authIsOwner = await loginID;
             res.locals.nickname = await login.LoginNick(req);
             res.locals.title = '글쓰기';
-            res.render('create', {
+            res.render('CRUD/create', {
                 title:'글쓰기',
                 authIsOwner:loginID,
                 nickname:await login.LoginNick(req)
@@ -65,7 +65,7 @@ router.get('/update/:pageId', async (req, res) => {
             var topicRe = await selectQ.topicRedirect(req.params.pageId);
             var topic = await selectQ.topicquery();
     
-            res.render('update', {
+            res.render('CRUD/update', {
                 authIsOwner:loginID,
                 nickname:await login.LoginNick(req),
                 filelist:topic,

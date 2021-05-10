@@ -29,7 +29,7 @@ router.get('/register', async (req, res) => {
             feedback = fmsg.error;
         }
         
-        res.render('register', {
+        res.render('CRUD/register', {
             title:'회원가입',
             feedback:feedback,
             authStatusUI:await login.LoginNick(req ,res)

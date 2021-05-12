@@ -9,12 +9,12 @@ list
                     -break
                 -}
                 li
-                    a(href="/topic/" + filelist[i].id) #{filelist[i].title} 
+                    a(href="/topic/" + filelist[i].id style="color:black") #{filelist[i].title} 
             -}
         -} else{
             -for(var j=0 ; j<limit ; j++){
                 li
-                    a(href="/topic/" + filelist[j+skip].id) #{filelist[j+skip].title}
+                    a(href="/topic/" + filelist[j+skip].id style="color:black") #{filelist[j+skip].title}
                 -if(maxPage % limit === j+1 && parseInt(pageId) === parseInt(maxPage/limit) +1){
                     -break;
                 -}   

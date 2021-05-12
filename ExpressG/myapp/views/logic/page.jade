@@ -6,19 +6,19 @@ page
     -var nextPage = parseInt(pageId) + 1;
 
     -if(pageId && pageId != '1'){
-        a(href="/" + prePage) 이전
+        a(href="/" + prePage style="color:black") 이전
     -}
     
-    a(href="/" + pageNum) [#{pageNum}]
+    a(href="/" + pageNum style="color:black") [#{pageNum}]
     -for(var i=0; i < filelist.length; i++){
         -if( pagelength > limit ){
                 -pageNum++;
-                a(href="/" + pageNum) [#{pageNum}]
+                a(href="/" + pageNum style="color:black") [#{pageNum}]
                 -pagelength -=limit;    
             -}
         -}
         
     -if(pageId && pageId != pageNum){
-        a(href="/" + nextPage) 다음
+        a(href="/" + nextPage style="color:black") 다음
     -}
 

@@ -4,10 +4,15 @@ block content
   div(style="color:red;") #{feedback}
   include logic/list
   include logic/page
-  h1 #{title} 
-    a(href="https://github.com/LEEHYUNHO2001/web1/tree/master" target="_blank" title="github 주소") 클릭 GitHub
+  h1 
+    #{title} 
   p
-    #{control}
-    a(href="/topic/create") 글쓰기
-    img(src="/images/view.jpg" style="width:300px; display:block; margin-top:10px")
-    
+    nav(class="navbar navbar-expand-sm navbar-light bg-white text-white mb-2")
+      div(class="container-fluid")
+        div(class="navbar-brand" style="width:100px; height:50px;float:left;")
+          ul(class="navbar-nav")
+            text #{control}
+            div(style="width:100px; height:50px;float:left;")
+                li(class="nav-item")
+                    a(href="/topic/create" class="nav-link" style="font-size:16px;float:left;") 글쓰기
+    img(src="/images/view.jpg" style="width:200px; display:block; margin-top:10px;float:left;")

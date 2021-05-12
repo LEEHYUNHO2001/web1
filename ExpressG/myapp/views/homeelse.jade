@@ -8,13 +8,19 @@ block content
   h2(style="font-size:10pt;") #{sanitizeDescription}
   p(style="color:red;") 작성자 : #{topicNickname}
   p
-    a(href="/topic/create") 글쓰기 | 
-    a(href="/topic/update/" + topicRe.id) 글수정
-
-    form(action="/topic/delete_process" method="post")
-        p
-         input(type="hidden" name="id" value="#{topicRe.id}")
-         input(type="hidden" name="users_id" value="#{topicRe.users_id}")
-         input(type="submit" value="글삭제")
-
-  
+    nav(class="navbar navbar-expand-sm navbar-light bg-white text-white mb-2")
+      div(class="container-fluid")
+        div(class="navbar-brand" style="width:1000px; height:50px;")
+          ul(class="navbar-nav")
+            text #{control}
+            div(style="width:100px; height:50px;float:left;")
+                li(class="nav-item")
+                    a(href="/topic/create" + topicRe.id class="nav-link" style="font-size:16px;float:left;") 글쓰기
+                li(class="nav-item")
+                    a(href="/topic/update/" class="nav-link" style="font-size:16px;") 글수정
+                li(class="nav-item")
+                  form(action="/topic/delete_process" method="post")
+                      p
+                      input(type="hidden" name="id" value="#{topicRe.id}")
+                      input(type="hidden" name="users_id" value="#{topicRe.users_id}")
+                      input(type="submit" value="글삭제" style="font-size:16px;")

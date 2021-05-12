@@ -1,0 +1,15 @@
+# Node.js Express 게시판
+- [x] PostgreSQL과 연동
+- [x] login / logout 기능 -> session에 id값 저장. passport 인증 구현(local)
+- [x] register(회원가입) -> DB users 테이블, password는 hash값(bcrypt)
+- [x] 글쓰기 -> DB topics 테이블
+- [x] 글수정 -> DB topics 테이블 update
+- [x] 글삭제 -> DB topics 테이블 delete
+- [x] 보안 -> compression, sanitize
+- [x] 글 목록, 해당 글 보기
+- [x] 작성자 표시, 로그인 시 자신의 닉네임 표시
+- [x] flash를 이용해 각종 경고문 생성
+- [x] 접근제어(로그인시 글 CRUD 가능, 자신의 글만 수정 및 삭제 가능)
+- [x] jade
+- [x] bootstrap
+- [x] 페이징 기능, 이전, 다음

@@ -5,7 +5,8 @@ block content
   include logic/page.jade
   p -------------------------------------------------
   h1(style="font-size:15pt;") 제목 : #{sanitizeTitle} 
-  h2(style="font-size:10pt;") #{sanitizeDescription}
+  h2(style="font-size:10pt;") 
+    textarea(cols="50" rows="8" readonly) #{sanitizeDescription}
   p(style="color:red;") 작성자 : #{topicNickname}
   p
     nav(class="navbar navbar-expand-sm navbar-light bg-white text-white mb-2")
@@ -17,7 +18,7 @@ block content
                 li(class="nav-item")
                     a(href="/topic/create" + topicRe.id class="nav-link" style="font-size:16px;float:left;") 글쓰기
                 li(class="nav-item")
-                    a(href="/topic/update/" class="nav-link" style="font-size:16px;") 글수정
+                    a(href="/topic/update/"  + topicRe.id class="nav-link" style="font-size:16px;") 글수정
                 li(class="nav-item")
                   form(action="/topic/delete_process" method="post")
                       p

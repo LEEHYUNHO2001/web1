@@ -1,0 +1,11 @@
+extends ../layout
+block content
+  h1= title
+    form(action="/topic/comment/create_process/" + topicRe.id method="post")
+        p
+          input(type="hidden" name="topicRe_id" value="#{topicRe.id}")
+          input(type="text" name="title" placeholder="글 제목 입력")
+          p(style="font-size:15pt;") 내용
+          textarea(name="description" placeholder="내용 입력" style="height:300px;width:500px;")
+          p
+          input(type="submit" value="작성")

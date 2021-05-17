@@ -26,9 +26,6 @@ router.get('/create', async (req, res) => {
         if(!loginID){
             login.accesslogin(req, res)
         }else{
-            res.locals.authIsOwner = await loginID;
-            res.locals.nickname = await login.LoginNick(req);
-            res.locals.title = '글쓰기';
             res.render('CRUD/create', {
                 title:'글쓰기',
                 authIsOwner:loginID,
@@ -121,6 +118,42 @@ router.post('/delete_process', async (req, res) => {
         }
     } catch(err){
         console.log('delete_process에러', err)
+    }
+});
+
+//comment create
+router.get('/comment/create/:pageId', async (req, res) => {
+    try{
+        var loginID = req.user;
+        if(!loginID){
+            login.accesslogin(req, res)
+        }else{
+            var topicRe = await selectQ.topicRedirect(req.params.pageId);
+            res.render('CRUD/commentCreate', {
+                title:'댓글쓰기',
+                authIsOwner:loginID,
+                nickname:await login.LoginNick(req),
+                topicRe:topicRe
+            });
+        }
+    } catch(err){
+        console.log('createUI에러', err);
+    }
+});
+
+//comment create process
+router.post('/comment/create_process/:pageId', async (req, res) => {
+    try{
+        var loginID =  req.user;
+        var post = await req.body;
+        var title = await post.title;
+        var description = await post.description;
+        var id = shortid.generate();
+        var topicRe_id = await post.topicRe_id;
+        await CRUD.createComment(id, title, description, loginID, topicRe_id);
+        res.redirect(`/`);
+    } catch(err){
+        console.log('create_process에러', err);
     }
 });
 

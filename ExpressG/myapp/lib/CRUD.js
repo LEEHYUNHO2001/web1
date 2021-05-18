@@ -58,5 +58,15 @@ module.exports = {
         } catch(err){
             console.log('createComment에러', err);
         }
+    },
+    
+    deleteComment: async (id) => {
+        try{
+            const deletequery = new Query(`
+            DELETE FROM comments WHERE topicre='${id}'`);
+            client.query(deletequery)
+        } catch(err){
+            console.log('deleteComment에러');
+        }
     }
 }

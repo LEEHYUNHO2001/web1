@@ -107,12 +107,15 @@ router.post('/delete_process', async (req, res) => {
             var post = await req.body;
             var id = await post.id;
             var users_id = await post.users_id;
-            
+            var searchComment = await selectQ.searchComment(id);
             //user 접근제어
             if(users_id != loginID){
                 await login.accessUser(req, res)
             } else{
                 await CRUD.deleteDatabase(id);
+                if(searchComment.length > 0){
+                    await CRUD.deleteComment(id);
+                }
                 res.redirect('/');
             }
         }

@@ -1,24 +1,25 @@
 page
-    -var pagelength = filelist.length;
-    -var limit = 5;
-    -var pageNum = 1;
-    -var prePage = parseInt(pageId) - 1;
-    -var nextPage = parseInt(pageId) + 1;
+    nav(class="navbar-warning bg-warning mb-2")
+        -var pagelength = filelist.length;
+        -var limit = 5;
+        -var pageNum = 1;
+        -var prePage = parseInt(pageId) - 1;
+        -var nextPage = parseInt(pageId) + 1;
 
-    -if(pageId && pageId != '1'){
-        a(href="/" + prePage style="color:black") 이전
-    -}
-    
-    a(href="/" + pageNum style="color:black") [#{pageNum}]
-    -for(var i=0; i < filelist.length; i++){
-        -if( pagelength > limit ){
-                -pageNum++;
-                a(href="/" + pageNum style="color:black") [#{pageNum}]
-                -pagelength -=limit;    
-            -}
+        -if(pageId && pageId != '1'){
+            a(href="/" + prePage style="color:black") 이전
         -}
         
-    -if(pageId && pageId != pageNum){
-        a(href="/" + nextPage style="color:black") 다음
-    -}
+        a(href="/" + pageNum style="color:black") [#{pageNum}]
+        -for(var i=0; i < filelist.length; i++){
+            -if( pagelength > limit ){
+                    -pageNum++;
+                    a(href="/" + pageNum style="color:black") [#{pageNum}]
+                    -pagelength -=limit;    
+                -}
+            -}
+            
+        -if(pageId && pageId != pageNum){
+            a(href="/" + nextPage style="color:black") 다음
+        -}
 

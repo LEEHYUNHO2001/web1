@@ -1,31 +1,30 @@
 extends layout
 
 block content
-  include logic/list
-  include logic/page
-  p ----------------------------------------------------------------
-
-  p
-    nav(class="navbar navbar-expand-sm navbar-light bg-white text-white mb-2")
-      div(class="container-fluid")
-        div(class="navbar-brand" style="width:500px; height:300px;")
-          ul(class="navbar-nav")
-            text #{control}
-            div(style="width:80px; height:30px;")
-                h1(style="font-size:15pt;width:200px;float:left;") 제목 : #{sanitizeTitle} 
-                h1(style="color:red;font-size:11pt;") 글 작성자 : #{topicNickname}
-                li(class="nav-item")
-                    a(href="/topic/create" class="nav-link" style="font-size:16px;float:left;") 글쓰기
-                li(class="nav-item")
-                    a(href="/topic/update/" + topicRe.id class="nav-link" style="font-size:16px;float:left;") 글수정
-                li(class="nav-item")
-                  form(action="/topic/delete_process" method="post")
-                      p
-                      input(type="hidden" name="id" value="#{topicRe.id}")
-                      input(type="hidden" name="users_id" value="#{topicRe.users_id}")
-                      input(type="submit" value="글삭제" style="font-size:16px;width:60px; height:30px;float:left;")
-                    h2(style="font-size:10pt;") 
-                      textarea(cols="50" rows="15" readonly) #{sanitizeDescription}
-                p --------------------------------------------------
+  nav(class="navbar-warning bg-warning mb-2")
+    div(class="container-fluid")
+      include logic/list
+      include logic/page
+  nav(class="navbar navbar-expand-sm navbar-light bg-primary text-black mb-2")
+    div(class="container-fluid")
+      div(class="navbar-brand" style="width:500px; height:300px;")
+        ul(class="navbar-nav")
+          text #{control}
+          div(style="width:80px; height:30px;")
+              h1(style="font-size:15pt;width:200px;float:left;") 제목 : #{sanitizeTitle} 
+              h1(style="color:red;font-size:11pt;") 글 작성자 : #{topicNickname}
+              li(class="nav-item")
+                  a(href="/topic/create" class="nav-link" style="font-size:16px;float:left;") 글쓰기
+              li(class="nav-item")
+                  a(href="/topic/update/" + topicRe.id class="nav-link" style="font-size:16px;float:left;") 글수정
+              li(class="nav-item")
+                form(action="/topic/delete_process" method="post")
+                    p
+                    input(type="hidden" name="id" value="#{topicRe.id}")
+                    input(type="hidden" name="users_id" value="#{topicRe.users_id}")
+                    input(type="submit" value="글삭제" style="font-size:16px;width:60px; height:30px;float:left;")
+                  h2(style="font-size:15pt;") 
+                    textarea(cols="35" rows="10" readonly) #{sanitizeDescription}
+                
                 include CRUD/commentCreate
                 include partials/comment

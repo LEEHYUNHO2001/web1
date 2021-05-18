@@ -2,17 +2,19 @@ extends layout
 
 block content
   div(style="color:red;") #{feedback}
-  include logic/list
-  include logic/page
+  nav(class="navbar-light bg-warning mb-2")
+    include logic/list
+    include logic/page
   h1 
     #{title} 
   p
-    nav(class="navbar navbar-expand-sm navbar-light bg-white text-white mb-2")
+    nav(class="navbar navbar-expand-sm navbar-light bg-warning text-black mb-2")
       div(class="container-fluid")
-        div(class="navbar-brand" style="width:100px; height:50px;float:left;")
+        div(class="navbar-brand" style="width:100px; height:50px;")
           ul(class="navbar-nav")
             text #{control}
-            div(style="width:100px; height:50px;float:left;")
+            div(style="width:100px; height:50px;")
                 li(class="nav-item")
-                    a(href="/topic/create" class="nav-link" style="font-size:16px;float:left;") 글쓰기
-    img(src="/images/view.jpg" style="width:200px; display:block; margin-top:10px;float:left;")
+                    a(href="/topic/create" class="nav-link" style="font-size:16px;") 글쓰기
+                li(class="nav-item")
+                   img(src="/images/view.jpg" style="width:200px; display:block; margin-top:20px;")

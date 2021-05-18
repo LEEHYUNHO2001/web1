@@ -1,23 +1,24 @@
 list
-    text(style="color:blue;width=100") 글 목록
-    -var limit = 5;
-    ol
-        -var maxPage=filelist.length;
-        -var skip = (pageId-1)*limit;
-        -if(!pageId){
-            -for(var i=0 ; i<limit ; i++){
-                -if(i === maxPage){
-                    -break
+    nav(class="navbar-warning bg-warning mb-2")
+        text(style="color:blue;width=100") 글 목록
+        -var limit = 5;
+        ol
+            -var maxPage=filelist.length;
+            -var skip = (pageId-1)*limit;
+            -if(!pageId){
+                -for(var i=0 ; i<limit ; i++){
+                    -if(i === maxPage){
+                        -break
+                    -}
+                    li
+                        a(href="/topic/" + filelist[i].id style="color:black") #{filelist[i].title} 
                 -}
-                li
-                    a(href="/topic/" + filelist[i].id style="color:black") #{filelist[i].title} 
+            -} else{
+                -for(var j=0 ; j<limit ; j++){
+                    li
+                        a(href="/topic/" + filelist[j+skip].id style="color:black") #{filelist[j+skip].title}
+                    -if(maxPage % limit === j+1 && parseInt(pageId) === parseInt(maxPage/limit) +1){
+                        -break;
+                    -}   
+                -}
             -}
-        -} else{
-            -for(var j=0 ; j<limit ; j++){
-                li
-                    a(href="/topic/" + filelist[j+skip].id style="color:black") #{filelist[j+skip].title}
-                -if(maxPage % limit === j+1 && parseInt(pageId) === parseInt(maxPage/limit) +1){
-                    -break;
-                -}   
-            -}
-        -}

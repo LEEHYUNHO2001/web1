@@ -1,0 +1,12 @@
+comment
+    -if(searchComment[0]){
+        -for(var i=0; i<searchComment.length; i++){
+            -var description = searchComment[i].description;
+            -var commentNick = searchComment[i].commentnick;
+            p
+                h1(style="font-size:15pt;color:blue")  #{commentNick}
+                h2(style="font-size:15pt;") #{description}
+        -}
+    -} else{
+        text(style="font-size:15pt;") 댓글이 없습니다.
+    -}

@@ -121,36 +121,16 @@ router.post('/delete_process', async (req, res) => {
     }
 });
 
-//comment create
-router.get('/comment/create/:pageId', async (req, res) => {
-    try{
-        var loginID = req.user;
-        if(!loginID){
-            login.accesslogin(req, res)
-        }else{
-            var topicRe = await selectQ.topicRedirect(req.params.pageId);
-            res.render('CRUD/commentCreate', {
-                title:'댓글쓰기',
-                authIsOwner:loginID,
-                nickname:await login.LoginNick(req),
-                topicRe:topicRe
-            });
-        }
-    } catch(err){
-        console.log('createUI에러', err);
-    }
-});
-
 //comment create process
 router.post('/comment/create_process/:pageId', async (req, res) => {
     try{
-        var loginID =  req.user;
+        var loginID =  await req.user;
         var post = await req.body;
-        var title = await post.title;
         var description = await post.description;
         var id = shortid.generate();
         var topicRe_id = await post.topicRe_id;
-        await CRUD.createComment(id, title, description, loginID, topicRe_id);
+        var commentNick = await selectQ.commentNick(loginID);
+        await CRUD.createComment(id, description, loginID, commentNick ,topicRe_id);
         res.redirect(`/`);
     } catch(err){
         console.log('create_process에러', err);
@@ -160,18 +140,21 @@ router.post('/comment/create_process/:pageId', async (req, res) => {
 //Home else
 router.get('/:pageId', async (req, res) => {
     try{
+        var loginID =  req.user;
         var topicRe = await selectQ.topicRedirect(req.params.pageId);
         var topic = await selectQ.topicquery();
         var topicNickname = await selectQ.topicNick(topicRe);
+        var searchComment = await selectQ.searchComment(topicRe.id);
     
         res.render('homeelse',{
             sanitizeTitle:sanitizeHtml(await topicRe.title),
             sanitizeDescription:sanitizeHtml(await topicRe.description, {allowedTags:['h1']}),
-            authIsOwner:req.user,
+            authIsOwner:loginID,
             filelist:topic,
             topicRe:await topicRe,
             topicNickname:await topicNickname,
-            nickname:await login.LoginNick(req)
+            nickname:await login.LoginNick(req),
+            searchComment:await searchComment
                 });
     } catch(err){
         console.log('Home elseUI에러', err)

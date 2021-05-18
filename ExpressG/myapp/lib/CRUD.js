@@ -49,14 +49,14 @@ module.exports = {
         }
     },
 
-    createComment: async (id, title, description, users_id, topicRe) => {
+    createComment: async (id, description, users_id, commentNick, topicRe) => {
         try{
             const createquery = new Query(`
-            CREATE TABLE IF NOT EXISTS comments (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50), topicRe VARCHAR(50));
-            INSERT INTO comments (id, title, description, users_id, topicRe) VALUES('${id}', '${title}', '${description}', '${users_id}','${topicRe}')`);
+            CREATE TABLE IF NOT EXISTS comments (id VARCHAR(50),  description VARCHAR(300), users_id VARCHAR(50), commentNick VARCHAR(10), topicRe VARCHAR(50));
+            INSERT INTO comments (id, description, users_id, commentNick, topicRe) VALUES('${id}', '${description}', '${users_id}', '${commentNick}', '${topicRe}')`);
             client.query(createquery)
         } catch(err){
-            console.log('createquery에러', err);
+            console.log('createComment에러', err);
         }
     }
 }

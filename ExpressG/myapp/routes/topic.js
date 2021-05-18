@@ -113,6 +113,7 @@ router.post('/delete_process', async (req, res) => {
                 await login.accessUser(req, res)
             } else{
                 await CRUD.deleteDatabase(id);
+                //댓글있으면 같이 삭제
                 if(searchComment.length > 0){
                     await CRUD.deleteComment(id);
                 }
@@ -134,7 +135,7 @@ router.post('/comment/create_process/:pageId', async (req, res) => {
         var topicRe_id = await post.topicRe_id;
         var commentNick = await selectQ.commentNick(loginID);
         await CRUD.createComment(id, description, loginID, commentNick ,topicRe_id);
-        res.redirect(`/`);
+        res.redirect(`/topic/${topicRe_id}`);
     } catch(err){
         console.log('create_process에러', err);
     }

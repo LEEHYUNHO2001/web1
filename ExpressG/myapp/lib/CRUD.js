@@ -9,7 +9,7 @@ module.exports = {
     createDatabase: async (id, title, description, users_id) => {
         try{
             const createquery = new Query(`
-            CREATE TABLE IF NOT EXISTS topics (id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
+            CREATE TABLE IF NOT EXISTS topics (num serial primary key, id VARCHAR(50), title VARCHAR(25), description VARCHAR(300), users_id VARCHAR(50));
             INSERT INTO topics (id, title, description, users_id) VALUES('${id}', '${title}', '${description}', '${users_id}')`);
             client.query(createquery)
         } catch(err){

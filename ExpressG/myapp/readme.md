@@ -13,3 +13,4 @@
 - [x] jade
 - [x] bootstrap
 - [x] 페이징 기능, 이전, 다음
+- [x] 댓글 -> DB comments 테이블. 작성자와 댓글 UI

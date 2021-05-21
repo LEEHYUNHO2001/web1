@@ -14,3 +14,4 @@
 - [x] bootstrap
 - [x] 페이징 기능, 이전, 다음
 - [x] 댓글 -> DB comments 테이블. 작성자와 댓글 UI
+- [x] 검색 기능 -> title, description, title_description

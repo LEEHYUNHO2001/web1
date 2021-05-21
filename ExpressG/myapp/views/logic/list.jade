@@ -2,6 +2,10 @@ list
     nav(class="navbar-warning bg-warning mb-2")
         text(style="color:blue;width=100") 글 목록
         -var limit = 5;
+        //search한 목록은 쭉 보여줌
+        -if(searchPage!=0){
+            -limit=searchPage;
+        -}
         ol
             -var maxPage=filelist.length;
             -var skip = (pageId-1)*limit;

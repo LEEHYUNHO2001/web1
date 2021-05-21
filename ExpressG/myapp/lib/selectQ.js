@@ -61,5 +61,38 @@ module.exports = {
         } catch(err){
             console.log('commentNick에러', err);
         }
+    },
+
+    searchTitle: async (searchText) => {
+        try{
+            const search = `SELECT * FROM topics WHERE title LIKE '%${searchText}%';`;
+            var clientquery = await client.query(search);
+            var searchTitle = await clientquery.rows;
+            return searchTitle
+        } catch(err){
+            console.log('searchTitle에러', err);
+        }
+    },
+
+    searchDescription: async (searchText) => {
+        try{
+            const search = `SELECT * FROM topics WHERE description LIKE '%${searchText}%';`;
+            var clientquery = await client.query(search);
+            var searchDescription = await clientquery.rows;
+            return searchDescription
+        } catch(err){
+            console.log('searchDescription에러', err);
+        }
+    },
+
+    searchTD: async (searchText) => {
+        try{
+            const search = `SELECT * FROM topics WHERE title LIKE '%${searchText}%' OR description LIKE '%${searchText}%';`;
+            var clientquery = await client.query(search);
+            var searchTD = await clientquery.rows;
+            return searchTD
+        } catch(err){
+            console.log('searchTD에러', err);
+        }
     }
 }

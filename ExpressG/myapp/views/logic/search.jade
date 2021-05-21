@@ -1,0 +1,12 @@
+search
+    form(action="/search" method="post")
+        select(name="options" id="options" value="" disavled)
+            option(value="title") 제목
+            option(value="description") 내용
+            option(value="title_description") 제목+내용
+        input(type="text" name="searchText" placeholder="검색어를 입력하세요")
+        button(type = "submit") 검색
+
+        //input(type="text" placeholder="검색", name="result")
+        //input(type="submit" value="검색")
+        //https://iot624.tistory.com/125

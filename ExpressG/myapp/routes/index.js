@@ -4,9 +4,10 @@ var cookieParser = require('cookie-parser');
 var login = require('../lib/loginstatus.js');
 var flash = require('connect-flash');
 var selectQ = require('../lib/selectQ.js');
-
+var bodyParser = require('body-parser');
 router.use(flash());
 router.use(cookieParser());
+router.use(bodyParser.urlencoded({extended: false}));
 
 //pg
 const {Client} = require('pg');
@@ -14,10 +15,8 @@ const config = require('../lib/config.js');
 var client = new Client(config)
 client.connect()
 
-const HomePageUI = async (req, res) => {
+const HomePageUI = async (req, res, filelist) => {
     try{
-        var topic = await selectQ.topicquery();
-
         //flash사용
         var fmsg = req.flash();
         var feedback = '';
@@ -28,7 +27,7 @@ const HomePageUI = async (req, res) => {
         res.render('index', {
             title:'Node.js 게시판',
             feedback:feedback,
-            filelist:topic,
+            filelist:filelist,
             authIsOwner:await req.user,
             pageId:await req.params.pageId,
             nickname:await login.LoginNick(req)
@@ -38,14 +37,38 @@ const HomePageUI = async (req, res) => {
     }
 }
 
+
 //Home
-router.get('/', (req, res) => {
-    HomePageUI(req, res)
+router.get('/', async(req, res) => {
+    var filelist = await selectQ.topicquery();
+    HomePageUI(req, res, filelist)
 });
 
 //page
-router.get('/:pageId', (req, res) => {   
-    HomePageUI(req, res)
+router.get('/:pageId', async(req, res) => {   
+    var filelist = await selectQ.topicquery();
+    HomePageUI(req, res, filelist)
+});
+
+router.post('/search', async(req, res) => {
+    try{
+        var post = await req.body;
+        var option = await post.options;
+        var searchText = await post.searchText;
+        var filelist = false;
+        
+        if(option === 'title'){
+            filelist = await selectQ.searchTitle(searchText);
+        } else if(option === 'description'){
+            filelist = await selectQ.searchDescription(searchText);
+        } else{
+            filelist = await selectQ.searchTD(searchText);
+        }
+        var topic = await selectQ.topicquery();
+        HomePageUI(req, res, filelist)
+    } catch(err){
+        console.log('search에러', err);
+    }
 });
 
 module.exports = router;

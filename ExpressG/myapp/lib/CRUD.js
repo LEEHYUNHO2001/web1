@@ -63,7 +63,7 @@ module.exports = {
     deleteComment: async (id) => {
         try{
             const deletequery = new Query(`
-            DELETE FROM comments WHERE topicre='${id}'`);
+            DELETE FROM comments WHERE id='${id}'`);
             client.query(deletequery)
         } catch(err){
             console.log('deleteComment에러');

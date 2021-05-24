@@ -4,7 +4,12 @@ comment
             -var description = searchComment[i].description;
             -var commentNick = searchComment[i].commentnick;
             p
-                h1(style="font-size:15pt;color:blue")  #{commentNick}
+                h1(style="font-size:15pt;width:80px;height:30px;color:blue;float:left")  #{commentNick}
+                form(action="/topic/comment/delete_process" method="post")
+                    p
+                    input(type="hidden" name="id" value="#{searchComment[i].id}")
+                    input(type="hidden" name="users_id" value="#{searchComment[i].users_id}")
+                    input(type="submit" value="댓글 삭제" style="font-size:16px;width:80px;height:30px;")
                 h2(style="font-size:15pt;") #{description}
         -}
     -} else{

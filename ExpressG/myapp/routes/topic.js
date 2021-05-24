@@ -141,6 +141,30 @@ router.post('/comment/create_process/:pageId', async (req, res) => {
     }
 });
 
+//delete comment process
+router.post('/comment/delete_process', async (req, res) => {
+    try{
+        //login 접근제어
+        var loginID = req.user;
+        if(!loginID){
+            await login.accesslogin(req, res)
+        } else{
+            var post = await req.body;
+            var id = await post.id;
+            var users_id = await post.users_id;
+            //user 접근제어
+            if(users_id != loginID){
+                await login.accessUser(req, res)
+            } else{
+                await CRUD.deleteComment(id);
+                res.redirect('/');
+            }
+        }
+    } catch(err){
+        console.log('delete_process에러', err)
+    }
+});
+
 //Home else
 router.get('/:pageId', async (req, res) => {
     try{

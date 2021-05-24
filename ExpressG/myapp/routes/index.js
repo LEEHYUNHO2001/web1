@@ -47,7 +47,6 @@ router.get('/', async(req, res) => {
 //page
 router.get('/:pageId', async(req, res) => {   
     var filelist = await selectQ.topicquery();
-    console.log('sdf : ', req.params.pageId)
     HomePageUI(req, res, 0, filelist)
 });
 

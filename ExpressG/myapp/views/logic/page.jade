@@ -5,7 +5,7 @@ page
         -var pageNum = 1;
         -var prePage = parseInt(pageId) - 1;
         -var nextPage = parseInt(pageId) + 1;
-        -if(searchPage!=0){
+        -if(searchPage!=0 && searchPage){
             text 검색한 결과입니다.
         -} else{
             -if(pageId && pageId != '1'){
@@ -16,7 +16,7 @@ page
             -for(var i=0; i < filelist.length; i++){
                 -if( pagelength > limit ){
                         -pageNum++;
-                        a(href="/" +searchPage+ pageNum style="color:black") [#{pageNum}]
+                        a(href="/" + pageNum style="color:black") [#{pageNum}]
                         -pagelength -=limit;    
                     -}
                 -}

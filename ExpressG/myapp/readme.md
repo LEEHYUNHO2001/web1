@@ -1,7 +1,7 @@
 # Node.js Express 게시판
 - [Development environment](#development-environment)
 - [Implementation](#implementation)
-- [](#ffmpeg-player)
+
 
 </br>
 </br>
@@ -35,6 +35,20 @@
 
 </br>
 </br>
+
+- Home
+<img width="280" alt="home" src="https://user-images.githubusercontent.com/78518132/121446530-ad210380-c9ce-11eb-8ae3-acd349c9ae2d.png">
+ 
+</br>
+ 
+- Table
+<img width="280" alt="table" src="https://user-images.githubusercontent.com/78518132/121446628-e8233700-c9ce-11eb-874e-c26e62563f2d.png">
+
+
+</br>
+</br>
+</br>
+
 [참고 사이트] https://opentutorials.org/course/3083
 </br>
 [참고 문헌] 기본기에 충실한 Node.js 10 입문서 조현영
